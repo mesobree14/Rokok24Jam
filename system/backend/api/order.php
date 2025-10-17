@@ -11,7 +11,11 @@
      if($_SERVER['REQUEST_METHOD'] === "GET"){
          $order_id = $_GET['order_id'];
           
-          $query = mysqli_query($conn, "SELECT * FROM stock_product WHERE id_order='$order_id'")or die(mysqli_error($conn));
+          $query = mysqli_query($conn, "SELECT SP.product_id,SP.product_count,SP.product_price,SP.price_center AS res_price_center,
+            SP.count_cord AS res_count_cord,SP.shipping_cost AS res_shipping_cost,SP.expenses,SP.id_order,NP.id_name,NP.product_name,NP.price,
+            NP.price_center,NP.count_cord,NP.shipping_cost
+            FROM stock_product SP LEFT JOIN name_product NP ON NP.id_name = SP.product_name 
+            WHERE SP.id_order='$order_id'")or die(mysqli_error($conn));
           $num_row = mysqli_num_rows($query);
           
           if($num_row > 0){
@@ -55,7 +59,18 @@
             $rows = mysqli_num_rows($get_stock);
             if($rows > 0){
               foreach($get_stock as $res){
+                $idp = $res['product_name'];
                 $trash_stock = mysqli_query($conn, "DELETE FROM stock_product WHERE id_order=$order_id");
+                //$delet_rateprice = mysqli_query($conn,"DELETE FROM rate_price WHERE id_productname='$idp'");
+                //if($delet_rateprice){
+                //  $arr[] = [
+                //    'rate'=> 'success'
+                //  ];
+                //}else{
+                //  $arr[] = [
+                //    'rate'=> 'fail'
+                //  ];
+                //}
                 if($trash_stock){
                   $countsuccess++;
                   $arr[] = [

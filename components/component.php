@@ -31,6 +31,12 @@ function navigationOfiicer($path = ""){
                           </a>
                         </li>
                         <li>
+                          <a href=\"{$path}product.php\">
+                              <i class=\"fa-solid fa-cube\"></i>
+                              <span>รายการสินค้า</span>
+                          </a>
+                        </li>
+                        <li>
                           <a href=\"{$path}orders.php\">
                               <i class=\"fa-solid fa-truck\"></i>
                               <span>คำสั่งซื้อ</span>
@@ -179,6 +185,34 @@ function setData($titleText, $number){
     echo $list;
   }
 
+function tableNameProduct($number,$id_product,$product_name,$price_default,$price_center,$count_cord,$shipping_cost){
+  $list = "
+    <tr>
+      <td></td>
+      <td>$number</td>
+      <td class=\"font-weight-bold\">$product_name</td>
+      <td class=\"font-weight-bold\">$price_default บาท</td>
+      <td class=\"font-weight-bold\">$price_center บาท</td>
+      <td class=\"font-weight-bold\">$count_cord คอต</td>
+      <td class=\"font-weight-bold\">$shipping_cost บาท</td>
+      <td>
+          <div class=\"table-data-feature\" >
+            <button type=\"button\" id=\"update_nameproduct\" data-target=\"#modalcreateformproduct\" data-toggle=\"modal\"  
+                   class=\"item\" data-ids=\"$id_product\" data-names=\"$product_name\" data-countcost=\"$count_cord\"
+                   data-price=\"$price_default\" data-pricecenter=\"$price_center\" data-shippingcost=\"$shipping_cost\"
+            >
+                <i class=\"fas fa-pencil-alt text-warning\"></i>
+            </button>
+            <button type=\"button\" class=\"item\" id=\"confirmTrashProductName\" data-id=\"$id_product\" data-name=\"$product_name\">
+              <i class=\"fas fa-trash-alt text-danger\"></i> 
+            </button>
+          </div>
+      </td>
+    </tr>
+  ";
+  echo $list;
+}
+
 function tablelistsetOrder ($number, $orderid, $ordername, $totalcost_order, $price_order, $sliptImg, $date_time_order){
   $listOrder = "
   <form>
@@ -217,19 +251,19 @@ function tablelistsetOrder ($number, $orderid, $ordername, $totalcost_order, $pr
   echo $listOrder;
 }
 
-function tablelistStock ($number, $product_name, $total_order, $total_count, $total_price, $total_sell){
+function tablelistStock ($number, $id_product,$is_productname, $total_order, $total_count, $total_price, $total_sell){
   $remaining_amount = $total_count - $total_sell;
   $listStock = "
   <form>
     <tr>
       <td class=\"font-weight-bold\">$number</td>
-      <td class=\"font-weight-bold\">$product_name</td>
+      <td class=\"font-weight-bold\">$is_productname</td>
       <td class=\"font-weight-bold\">$total_count ชิ้น</td> 
       <td class=\"font-weight-bold\">$total_sell ชิ้น</td> 
       <td class=\"font-weight-bold\">$remaining_amount ชิ้น</td> 
       <td class='text-center'>
           <div class=\"table-data-feature\" >
-            <a class=\"item\" data-toggle=\"tootip\" data-placement=\"top\" title=\"จัดสรรทุน\" href=\"details/detail_stock.php?product_name=".urlencode($product_name)." \">
+            <a class=\"item\" data-toggle=\"tootip\" data-placement=\"top\" title=\"จัดสรรทุน\" href=\"details/detail_stock.php?id_productname=$id_product \">
               <i class=\"fas fa-list-alt\"></i>
             </a>
           </div>
@@ -240,16 +274,17 @@ function tablelistStock ($number, $product_name, $total_order, $total_count, $to
   echo $listStock;
 }
 
-function tableDetailStock($number, $product_id,$productname,$productcount,$productprice, $ordername, $datetime_order){
+function tableDetailStock($number, $product_id,$id_nameproduct,$is_product_name,$productcount,$productprice, $count_cord,$price_center,$ordername, $datetime_order){
     $toal_all = $productprice * $productcount;
     $list_stock = "
         <form>
             <tr>
               <td class=\"font-weight-bold\">$number</td>
-              <td class=\"font-weight-bold\">$productname</td>
+              <td class=\"font-weight-bold\">$is_product_name</td>
               <td class=\"font-weight-bold\">$ordername</td>
-              <td class=\"font-weight-bold\">$productprice บาท</td> 
-              <td class=\"font-weight-bold\">$productcount ชิ้น</td> 
+              <td class=\"font-weight-bold\">$productprice บาท</td>
+              <td class=\"font-weight-bold\">$price_center บาท</td>
+              <td class=\"font-weight-bold\">$productcount ลัง ($count_cord คอต)</td>
               <td class=\"font-weight-bold\">$toal_all</td> 
               <td class=\"font-weight-bold\">$datetime_order</td> 
             </tr>
@@ -291,21 +326,21 @@ function tableDetailStockSell($number, $product_id,$productname,$ordername, $pro
     echo $list_stock;
 }
 
-function detailStock($productname,$total_count,$total_price,$product_price, $count_sell, $income_price, $number_of_timessold){
+function detailStock($productname,$total_count,$count_cord,$total_price,$product_price, $count_sell, $income_price, $number_of_timessold){
     $Average1_piece = $total_price / $total_count;
     $remaining_products = $total_count - $count_sell;
-    $cost_price = $product_price * $count_sell;
+    $cost_price = $Average1_piece * $count_sell;
     $total_profit = $income_price - $cost_price;
     $detail = "
     
         <div class=\"rounded row mt-4 p-4\">
-           <div class=\"col-lg-2 col-md-3 col-sm-6 col-12 m-2 p-3 bg-white info-box rounded info-box rounded\">
-            <span>ค่าเฉลี่ยสินค้า $productname ชิ้นละ</span>
+           <div class=\"col-lg-3 col-md-3 col-sm-6 col-12 m-2 p-3 bg-white info-box rounded info-box rounded\">
+            <span>ค่าเฉลี่ยสินค้า $productname ลังละ</span>
             <p class=\"font-weight-bold res_text\"> ".number_format($Average1_piece ?? 0,2,'.',',')." บาท </p>
           </div>
-          <div class=\"col-lg-3 col-md-4 col-sm-6 col-12 m-2 p-3 bg-white info-box rounded\">
+          <div class=\"col-lg-2 col-md-4 col-sm-6 col-12 m-2 p-3 bg-white info-box rounded\">
             <span>จำนวนสิ้นค้าทัั้งหมด</span>
-                <p class=\"font-weight-bold res_text\"> $total_count ชิ้น</p>
+                <p class=\"font-weight-bold res_text\"> $total_count ลัง ($count_cord คอต)</p>
           </div>
           <div class=\"col-lg-3 col-md-4 col-sm-6 col-12 m-2 p-3 bg-white info-box rounded\">
             <span>ต้นทุนทั้งหมด</span>
@@ -339,7 +374,7 @@ function detailStock($productname,$total_count,$total_price,$product_price, $cou
     echo $detail;
 }
 
-function listRatePrice($rate_id="",$rate_storefront_price="",$rate_vip_price="",$rate_dealer_price="ยังไม่ได้กำหนด",$rate_delivery_price="",$product_name, $price_product){
+function listRatePrice($rate_id="",$rate_storefront_price="",$rate_vip_price="",$rate_dealer_price="ยังไม่ได้กำหนด",$rate_delivery_price="",$product_name, $price_product,$id_name,$productpricecenter,$countcords,$shipping_cost){
     function status($id){
         if($id){
             return "<i class=\"fas fa-pencil-alt text-warning\"></i>";
@@ -350,7 +385,7 @@ function listRatePrice($rate_id="",$rate_storefront_price="",$rate_vip_price="",
     $list = "
         <form>
             <tr>
-                <td class=\"font-weight-bold\">เรทราคา : </td>
+                <td class=\"font-weight-bold\">เรทราคา :</td>
                 <td class=\"font-weight-bold\">$rate_storefront_price</td>
                 <td class=\"font-weight-bold\">$rate_vip_price</td>
                 <td class=\"font-weight-bold\">$rate_dealer_price</td>
@@ -358,8 +393,9 @@ function listRatePrice($rate_id="",$rate_storefront_price="",$rate_vip_price="",
                 <td>
                     <div class=\"table-data-feature\" >
                         <button type=\"button\" id=\"set_rate_price\" data-target=\"#modalFormUpdateRate\" data-toggle=\"modal\"  
-                           class=\"item\" data-id=\"$rate_id\" data-product=\"$product_name\" data-storefront=\"$rate_storefront_price\" data-vip=\"$rate_vip_price\" 
-                           data-dealers=\"$rate_dealer_price\" data-delivery=\"$rate_delivery_price\" data-productprice=\"$price_product\"
+                           class=\"item\" data-id=\"$rate_id\" data-product=\"$product_name\" data-idname=\"$id_name\" data-storefront=\"$rate_storefront_price\" data-vip=\"$rate_vip_price\" 
+                           data-dealers=\"$rate_dealer_price\" data-delivery=\"$rate_delivery_price\" data-productprice=\"$price_product\" data-productpricecenter=\"$productpricecenter\"
+                           data-countcord=\"$countcords\" data-shippingcost=\"$shipping_cost\"
                         >
                             ".status($rate_id)."
                         </button>
@@ -591,7 +627,7 @@ function listProductSell($number,$product_id, $product_anme, $rate_customerprice
   echo $list;
 }
 
-function listDetailOrderBuy($order_id, $order_name, $total_cost, $data_time_buy, $order_slipt, $total_product, $count_product){
+function listDetailOrderBuy($order_id, $order_name, $total_cost, $data_time_buy, $order_slipt, $total_product, $count_product,$count_cord){
   $list = "
     <div class=\"col-12 p-0 m-0\">
         <div class=\"col-12 row my-4\">
@@ -610,7 +646,7 @@ function listDetailOrderBuy($order_id, $order_name, $total_cost, $data_time_buy,
             <div class=\"col-12 row gap-x-4 my-4\">
               <div> ค่าใช้จ่าย : <span style=\"color:#ff944d\"> [ $total_cost ] </span>บาท </div>
               <div class=\"mx-5\"> ประเภทสินค้า : <span style=\"color:#9933ff\"> [ $total_product ] </span> รายการ</div>
-              <div> จำนวน : <span style=\"color:#ff0066\"> [ $count_product ] </span> ชิ้น</div>
+              <div class=\"mt-3\"> จำนวน : <span style=\"color:#ff0066\"> [ $count_product ] </span> ลัง / <span style=\"color:#ff0066\"> [ $count_cord ] </span> คอต</div>
             </div>
             <div class=\"col-12 row mb-4\">
               <div class=\"font-bold\">
@@ -630,13 +666,14 @@ function listDetailOrderBuy($order_id, $order_name, $total_cost, $data_time_buy,
   echo $list;
 }
 
-function listProductBuy($number,$product_id, $product_name, $cost_price, $total_product, $prices){
+function listProductBuy($number,$product_id, $product_name, $cost_price,$price_center, $total_product,$count_cord, $prices){
   $list = "
     <tr>
       <td class=\"font-weight-bold \"> $number</td>
       <td class=\"font-weight-bold \"> $product_name</td>
       <td class=\"font-weight-bold \"> $cost_price บาท</td>
-      <td class=\"font-weight-bold \"> $total_product ชิ้น</td>
+      <td class=\"font-weight-bold \"> $price_center บาท</td>
+      <td class=\"font-weight-bold \"> $total_product ลัง($count_cord คอต)</td>
       <td class=\"font-weight-bold \"> $prices บาท</td>
     </tr>
   ";

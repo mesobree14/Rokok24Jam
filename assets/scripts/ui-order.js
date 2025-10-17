@@ -95,7 +95,8 @@ const uiForm = `
         <button type="button" class="remove-btn ml-auto my-2">❌ ลบ</button>
         </div>
         <div class="form-group mb-2">
-          <label class="mt-0 mb-0 font-weight-bold text-dark labelCount"></label>
+          <label class="mt-0 mb-0 font-weight-bold text-dark labelCount"> </label>
+          <input class="selectedId form-control c_product_id"  type="hidden" name="product_id[]" required/>
           <div class="customInputContainer">
               <div class="customInput searchInput">
                   <input class="selectedData form-control c_product_name"  type="text" name="product_name[]" required/>
@@ -104,31 +105,46 @@ const uiForm = `
                   <ul></ul>
               </div>
           </div>
-        </div>  
+        </div> 
+        <div class="col-12 row">
+          <span class="res_expenses text-danger ml-auto"></span>
+        </div>
       </div>
       <div class="col-md-12 row">
-        <div class="col-md-4">
+        <div class="col-md-2">
           <div class="form-group mb-2">
             <label class="mt-0 mb-0 font-weight-bold text-dark">จำนวนลัง</label>
             <input type="text" class="c_count_product form-control" name="count_product[]" id="" placeholder="จำนวนลัง" required>
           </div>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-2">
             <div class="form-group mb-2">
               <label class="mt-0 mb-0 font-weight-bold text-dark">ราคาต้นทุน/ลัง</label>
               <input type="text" class="c_price_product form-control" name="price_product[]" id="" placeholder="ราคาต้นทุน" required>
             </div>
         </div>
-        <div class="col-md-2 align-self-center">
+        <div class="col-md-2">
             <div class="form-group mb-2">
-              <label class="mt-0 mb-0 font-weight-bold text-dark">ค่าใช้จ่าย</label>
-              <input type="text" class="c_expenses form-control" name="expenses[]" placeholder="ค่าใช้จ่าย" required>
+              <label class="mt-0 mb-0 font-weight-bold text-dark">ราคากลาง/ลัง</label>
+              <input type="text" class="c_price_center form-control" name="price_center[]" id="" placeholder="ราคาต้นทุน" required>
             </div>
         </div>
-        <div class="col-md-3 align-self-center">
+        <div class="col-md-2 align-self-center">
             <div class="form-group mb-2">
-              <label class="mt-0 mb-0 font-weight-bold text-dark">จำนวนคอต</label>
-              <input type="text" class="c_expenses form-control" name="count_cord[]" placeholder="จำนวนคอต" required>
+              <label class="mt-0 mb-0 font-weight-bold text-dark">จำนวนคอต <span class="is_countcord"></span> / 1 ลัง</label>
+              <input type="text" class="c_cord form-control" name="count_cord[]" placeholder="จำนวนคอต" required>
+            </div>
+        </div>
+        <div class="col-md-2 align-self-center">
+            <div class="form-group mb-2">
+              <label class="mt-0 mb-0 font-weight-bold text-dark">ค่าส่ง <span class="is_shipping"></span> /1 ลัง </label>
+              <input type="text" class="c_shippingcost form-control" name="shipping_cost[]" placeholder="ค่าใช้จ่าย" required>
+            </div>
+        </div>
+        <div class="col-md-2 align-self-center">
+            <div class="form-group mb-2">
+              <label class="mt-0 mb-0 font-weight-bold text-dark">ค่าใช้จ่าย </label>
+              <input type="text" class="c_expenses form-control" name="expenses[]" placeholder="ค่าใช้จ่าย" required>
             </div>
         </div>
       </div>
@@ -208,7 +224,8 @@ class modelCreateOrder extends HTMLElement {
   async loadProduct() {
     try {
       const api_data = await fetch(
-        "http://localhost/Rokok24Jam/system/backend/api/stock.php",
+        //"http://localhost/Rokok24Jam/system/backend/api/stock.php",
+        "http://localhost/Rokok24Jam/system/backend/api/product_name.php",
         {
           method: "GET",
           credentials: "include",
@@ -235,13 +252,16 @@ class modelCreateOrder extends HTMLElement {
     document.getElementById("orderbuy_name").value = id;
   }
 
-  updateData(data_product, index, group) {
+  updateData(data_product, id_nameproduct, index, group) {
     let selectedData = group.querySelector(`.IsselectedData-${index}`);
+    let selectId = group.querySelector(`.IsSelectId-${index}`);
     let customInputContainer = group.querySelector(
       `.IscustomInputContainer-${index}`
     );
     const ul = group.querySelector("ul");
+    //code
     selectedData.value = data_product ?? "";
+    selectId.value = id_nameproduct ?? "";
     for (const li of group.querySelectorAll("li.selected")) {
       li.classList.remove("selected");
     }
@@ -264,14 +284,37 @@ class modelCreateOrder extends HTMLElement {
         let customInput = group.querySelector(`.customInput`);
         let customInputContainer = group.querySelector(".customInputContainer");
         let selectedData = group.querySelector(".selectedData");
+        let selectedId = group.querySelector(".selectedId");
         let serchInput = group.querySelector(".searchInput input");
         let ul = group.querySelector(`.options ul`);
 
         customInput.classList.add(`IscustomInput-${index}`);
         customInputContainer.classList.add(`IscustomInputContainer-${index}`);
         selectedData.classList.add(`IsselectedData-${index}`);
+        selectedId.classList.add(`IsSelectId-${index}`);
         serchInput.classList.add(`IsserchInput-${index}`);
         ul.classList.add(`Isoptions-${index}`);
+
+        let product_name = group.querySelector(".c_product_name");
+        let count_product = group.querySelector(".c_count_product");
+        let price_product = group.querySelector(".c_price_product");
+        let expenses = group.querySelector(".c_expenses");
+        let price_center = group.querySelector(".c_price_center");
+        let count_cord = group.querySelector(".c_cord");
+        let shippingcost = group.querySelector(".c_shippingcost");
+        let is_countcord = group.querySelector(".is_countcord");
+        let is_shipping = group.querySelector(".is_shipping");
+        let res_expenses = group.querySelector(".res_expenses");
+        product_name.id = `product_name-${index}`;
+        count_product.id = `count_product-${index}`;
+        price_product.id = `price_product-${index}`;
+        expenses.id = `expenses-${index}`;
+        count_cord.id = `count_cord-${index}`;
+        shippingcost.id = `i_shippingcost-${index}`;
+        price_center.id = `price_center-${index}`;
+        is_countcord.id = `is_countcord-${index}`;
+        is_shipping.id = `is_shipping-${index}`;
+        res_expenses.id = `res_expenses-${index}`;
 
         window.addEventListener("click", (e) => {
           const searchInputEl = group.querySelector(`.IssearchInput-${index}`);
@@ -297,11 +340,15 @@ class modelCreateOrder extends HTMLElement {
           const row = document.createElement("div");
           row.classList.add("row");
           let span = document.createElement("span");
+          let pre = document.createElement("p");
+          pre.style.display = "none";
           let small = document.createElement("small");
           span.textContent = product.product_name;
-          small.textContent = `เหลืออีก ${product.remaining_product} ชิ้น`;
+          pre.textContent = product.id_name;
+          small.textContent = `เหลืออีก ${product.countcord_product} คอต`;
           small.classList.add("ml-auto");
           row.appendChild(span);
+          row.appendChild(pre);
           row.appendChild(small);
           li.appendChild(row);
           ul.appendChild(li);
@@ -309,12 +356,16 @@ class modelCreateOrder extends HTMLElement {
         ul.querySelectorAll("li").forEach((li) => {
           li.addEventListener("click", () => {
             let spanTxt = li.querySelector("span").innerText;
+            let spanId = li.querySelector("p").innerText;
+            selectedId.value = spanId;
             selectedData.value = spanTxt;
+
             for (const li of document.querySelectorAll("li.selected")) {
               li.classList.remove("selected");
             }
             li.classList.add("selected");
             customInputContainer.classList.toggle("show");
+            this.getDataList(spanId, index, group);
           });
         });
         serchInput.addEventListener("keyup", () => {
@@ -322,45 +373,81 @@ class modelCreateOrder extends HTMLElement {
           let searched_product = this.stockproducts.filter((data) =>
             data.product_name.toLowerCase().includes(searchedVal)
           );
-          console.log({ searched_product });
           ul.innerHTML = "";
           if (searched_product.length === 0) {
-            ul.innerHTML = "";
+            //dropdown.classList.add("disableds");
+            ul.innerHTML = `<p style='margin-top: 1rem;'>
+                          ไม่มีข้อมูล
+                        </p>`;
             return;
           }
           searched_product.forEach((data) => {
             const li = document.createElement("li");
-            li.textContent = data.product_name;
+            li.classList.add("row");
+            const spanName = document.createElement("span");
+            const idInLi = document.createElement("p");
+            let small2 = document.createElement("small");
+            idInLi.textContent = data.id_name;
+            spanName.classList = "names-product";
+            idInLi.className = "hidden-id";
+            idInLi.style.display = "none";
+            //li.textContent = data.product_name;
+            spanName.textContent = data.product_name;
+            small2.textContent = `เหลืออีก ${data.countcord_product} คอต`;
+            small2.classList.add("ml-auto");
+            li.appendChild(spanName);
+            li.appendChild(idInLi);
+            li.appendChild(small2);
             li.addEventListener("click", (e) => {
-              this.updateData(e.target.textContent, index, group);
+              let idName = li.querySelector(".hidden-id").textContent;
+              let productName = li.querySelector(".names-product").textContent;
+              this.updateData(productName, idName, index, group);
+              this.getDataList(idName, index, group);
             });
             ul.appendChild(li);
           });
         });
 
-        let product_name = group.querySelector(".c_product_name");
-        let count_product = group.querySelector(".c_count_product");
-        let price_product = group.querySelector(".c_price_product");
-        let expenses = group.querySelector(".c_expenses");
-        product_name.id = `product_name-${index}`;
-        count_product.id = `count_product-${index}`;
-        price_product.id = `price_product-${index}`;
-        expenses.id = `expenses-${index}`;
         count_product.addEventListener("input", (e) => {
           let value = e.target.value;
 
-          price_product.value = Number((expenses.value / value).toFixed(2));
+          //price_product.value = Number((expenses.value / value).toFixed(2));
+          count_cord.value = Number(value * Number(is_countcord.textContent));
+          shippingcost.value = Number(
+            value * Number(is_shipping.textContent)
+          ).toFixed(2);
+          expenses.value =
+            Number((price_product.value * value).toFixed(2)) +
+            Number(shippingcost.value);
+          res_expenses.textContent = `สินค้า(${Number(
+            (price_product.value * value).toFixed(2)
+          )}) + ค่าส่ง(${Number(shippingcost.value).toFixed(2)})`;
           createGrandTotal(this.financedata);
         });
 
         price_product.addEventListener("input", (e) => {
           let value = e.target.value;
-          expenses.value = Number((count_product.value * value).toFixed(2));
+          expenses.value =
+            Number((count_product.value * value).toFixed(2)) +
+            Number(shippingcost.value);
+          res_expenses.textContent = `สินค้า(${Number(
+            (count_product.value * value).toFixed(2)
+          )}) + ค่าส่ง(${Number(shippingcost.value).toFixed(2)})`;
           createGrandTotal(this.financedata);
+        });
+        shippingcost.addEventListener("input", (e) => {
+          let value = e.target.value;
+          expenses.value =
+            Number((count_product.value * price_product.value).toFixed(2)) +
+            Number(value);
+          res_expenses.textContent = `สินค้า(${Number(
+            (count_product.value * price_product.value).toFixed(2)
+          )}) + ค่าส่ง(${Number(shippingcost.value).toFixed(2)})`;
         });
 
         expenses.addEventListener("input", (e) => {
-          let value = e.target.value;
+          let value =
+            Number(e.target.value) - Number(shippingcost.value).toFixed(2);
           price_product.value = Number(
             (value / count_product.value).toFixed(2)
           );
@@ -382,6 +469,25 @@ class modelCreateOrder extends HTMLElement {
       CountForm();
     });
     CountForm();
+  }
+  getDataList(idProductName, indexs, groups) {
+    let price_center = groups.querySelector(".c_price_center");
+    let price_product = groups.querySelector(".c_price_product");
+    let is_countcord = groups.querySelector(".is_countcord");
+    //let is_expenses = groups.querySelector(".is_expenses");
+    let is_shipping = groups.querySelector(".is_shipping");
+    price_product.id = `price_product-${indexs}`;
+    price_center.id = `price_center-${indexs}`;
+    is_countcord.id = `is_countcord-${indexs}`;
+    //is_expenses.id = `is_expenses-${indexs}`;
+    is_shipping.id = `is_shipping-${indexs}`;
+    let dataproduct = this.stockproducts.filter((data) =>
+      data.id_name.toLowerCase().includes(idProductName.toLowerCase())
+    );
+    price_product.value = dataproduct[0].price;
+    price_center.value = dataproduct[0].price_center;
+    is_countcord.textContent = dataproduct[0].count_cord;
+    is_shipping.textContent = `${dataproduct[0].shipping_cost}`;
   }
   renderCreateOrder() {
     this.innerHTML = `
@@ -436,7 +542,8 @@ class modelCreateOrder extends HTMLElement {
                 <div class="col-md-12 border mb-3 formGroup">
                     <div class="col-md-12">
                       <div class="form-group mb-2">
-                        <label class="mt-0 mb-0 font-weight-bold text-dark">ชื่อสินค้าตัวที่1</label>
+                        <label class="mt-0 mb-0 font-weight-bold text-dark">ชื่อสินค้าตัวที่1 </label>
+                        <input class="selectedId form-control c_product_id"  type="hidden" name="product_id[]" required/>
                         <div class="customInputContainer">
                             <div class="customInput searchInput">
                                 <input class="selectedData form-control c_product_name"  type="text" name="product_name[]" required/>
@@ -445,32 +552,49 @@ class modelCreateOrder extends HTMLElement {
                                 <ul></ul>
                             </div>
                         </div>
+                      </div>
+                      <div class="col-12 row">
+                        <span class="res_expenses text-danger ml-auto"></span>
                       </div>  
                     </div>
                     <div class="col-md-12 row">
-                      <div class="col-md-4">
+                      <div class="col-md-2">
                         <div class="form-group mb-2">
                           <label class="mt-0 mb-0 font-weight-bold text-dark">จำนวนลัง</label>
                           <input type="text" class="c_count_product form-control" name="count_product[]"placeholder="จำนวนลัง" required>
                         </div>
                       </div>
-                      <div class="col-md-3">
+                      <div class="col-md-2">
                           <div class="form-group mb-2">
                             <label class="mt-0 mb-0 font-weight-bold text-dark">ราคาต้นทุน/ลัง</label>
                             <input type="text" class="c_price_product form-control" name="price_product[]" placeholder="ราคาต้นทุน" required>
                           </div>
                       </div>
-                      <div class="col-md-2 align-self-center">
+                      <div class="col-md-2">
                           <div class="form-group mb-2">
-                            <label class="mt-0 mb-0 font-weight-bold text-dark">ค่าใช้จ่าย</label>
-                            <input type="text" class="c_expenses form-control" name="expenses[]" placeholder="ค่าใช้จ่าย" required>
+                            <label class="mt-0 mb-0 font-weight-bold text-dark">ราคากลาง/ลัง</label>
+                            <input type="text" class="c_price_center form-control" name="price_center[]" id="" placeholder="ราคาต้นทุน" required>
                           </div>
                       </div>
-                      <div class="col-md-3 align-self-center">
+                      <div class="col-md-2 align-self-center">
                         <div class="form-group mb-2">
-                          <label class="mt-0 mb-0 font-weight-bold text-dark">จำนวนคอต</label>
-                          <input type="text" class="c_expenses form-control" name="count_cord[]" placeholder="จำนวนคอต" required>
+                          <label class="mt-0 mb-0 font-weight-bold text-dark">จำนวนคอต <span class="is_countcord text-danger"></span> / 1 ลัง</label>
+                          <input type="text" class="c_cord form-control" name="count_cord[]" placeholder="จำนวนคอต" required>
                         </div>
+                      </div>
+                      <div class="col-md-2 align-self-center">
+                          <div class="form-group mb-2">
+                            <label class="mt-0 mb-0 font-weight-bold text-dark">ค่าส่ง <span class="is_shipping text-danger"></span> /1 ลัง</label>
+                            <input type="text" class="c_shippingcost form-control" name="shipping_cost[]" placeholder="ค่าใช้จ่าย" required>
+                          </div>
+                      </div>
+                      <div class="col-md-2 align-self-center">
+                          <div class="form-group mb-2">
+                            <label class="mt-0 mb-0 font-weight-bold text-dark">
+                              ค่าใช้จ่าย
+                            </label>
+                            <input type="text" class="c_expenses form-control" name="expenses[]" placeholder="ค่าใช้จ่าย" required>
+                          </div>
                       </div>
                     </div>
                 </div>
@@ -499,6 +623,7 @@ const uiFormUpdate = `
         </div>
         <div class="form-group mb-2">
           <label class="mt-0 mb-0 font-weight-bold text-dark labelCount"></label>
+          <input class="selectedId form-control c_product_id"  type="hidden" name="product_id[]" required/>
           <div class="customInputContainer">
               <div class="customInput searchInput">
                   <input class="selectedData form-control u_product_name"  type="text" name="product_name[]" required/>
@@ -510,29 +635,41 @@ const uiFormUpdate = `
         </div>  
       </div>
       <div class="col-md-12 row">
-        <div class="col-md-4">
+        <div class="col-md-2">
           <div class="form-group mb-2">
             <label class="mt-0 mb-0 font-weight-bold text-dark">จำนวนลัง</label>
             <input type="text" class="u_count_product form-control" name="count_product[]" id="" placeholder="จำนวนลัง" required>
           </div>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-2">
             <div class="form-group mb-2">
               <label class="mt-0 mb-0 font-weight-bold text-dark">ราคาต้นทุน/ลัง</label>
               <input type="text" class="u_price_product form-control" name="price_product[]" id="" placeholder="ราคาต้นทุน" required>
             </div>
+        </div>
+        <div class="col-md-2">
+            <div class="form-group mb-2">
+              <label class="mt-0 mb-0 font-weight-bold text-dark">ราคากลาง/ลัง</label>
+              <input type="text" class="c_price_center form-control" name="price_center[]" id="" placeholder="ราคาต้นทุน" required>
+            </div>
+        </div>
+        <div class="col-md-2 align-self-center">
+          <div class="form-group mb-2">
+            <label class="mt-0 mb-0 font-weight-bold text-dark">จำนวนคอต</label>
+            <input type="text" class="c_expenses form-control" name="count_cord[]" placeholder="จำนวนคอต" required>
+          </div>
+        </div>
+        <div class="col-md-2 align-self-center">
+          <div class="form-group mb-2">
+            <label class="mt-0 mb-0 font-weight-bold text-dark">ค่าส่ง</label>
+            <input type="text" class="c_shippingcost form-control" name="shipping_cost[]" placeholder="ค่าส่ง" required>
+          </div>
         </div>
         <div class="col-md-2 align-self-center">
             <div class="form-group mb-2">
               <label class="mt-0 mb-0 font-weight-bold text-dark">ค่าใช้จ่าย</label>
               <input type="text" class="u_expenses form-control" name="expenses[]" placeholder="ค่าใช้จ่าย" required>
             </div>
-        </div>
-        <div class="col-md-3 align-self-center">
-          <div class="form-group mb-2">
-            <label class="mt-0 mb-0 font-weight-bold text-dark">จำนวนคอต</label>
-            <input type="text" class="c_expenses form-control" name="count_cord[]" placeholder="จำนวนคอต" required>
-          </div>
         </div>
       </div>
     `;
@@ -612,7 +749,8 @@ class modelUpdateOrder extends HTMLElement {
   async loadProductAll() {
     try {
       const api_data = await fetch(
-        "http://localhost/Rokok24Jam/system/backend/api/stock.php",
+        //"http://localhost/Rokok24Jam/system/backend/api/stock.php",
+        "http://localhost/Rokok24Jam/system/backend/api/product_name.php",
         {
           method: "GET",
           credentials: "include",
@@ -686,7 +824,7 @@ class modelUpdateOrder extends HTMLElement {
         let span = document.createElement("span");
         let small = document.createElement("small");
         span.textContent = product.product_name;
-        small.textContent = `เหลืออีก ${product.remaining_product} ชิ้น`;
+        small.textContent = `เหลืออีก ${product.countcord_product} คอต`;
         small.classList.add("ml-auto");
         row.appendChild(span);
         row.appendChild(small);
@@ -765,20 +903,21 @@ class modelUpdateOrder extends HTMLElement {
       const data = await response.json();
       this.stockproducts_id.push(...data.data);
       const container = document.getElementById("formupdateorder");
-
-      data.data.forEach((stock, index) => {
-        const div = document.createElement("div");
-        div.className = "formGroup col-md-12 border mb-3";
-        div.dataset.index = stock.product_id;
-        this.countterForm();
-        div.innerHTML = `
+      data.data &&
+        data.data.forEach((stock, index) => {
+          const div = document.createElement("div");
+          div.className = "formGroup col-md-12 border mb-3";
+          div.dataset.index = stock.product_id;
+          this.countterForm();
+          div.innerHTML = `
             <div class="col-md-12" >
               <div class=row col-12">
-              <button type="button" class="remove-btn-2 ml-auto my-2" data-index="${stock.product_id}">❌ ลบ</button>
+               <button type="button" class="remove-btn-2 ml-auto my-2" data-index="${stock.product_id}">❌ ลบ</button>
               </div>
               <input type="hidden" name="product_id[]" value="${stock.product_id}" />
               <div class="form-group mb-2">
                 <label class="mt-0 mb-0 font-weight-bold text-dark"></label>
+                <input class="form-control c_product_id"  type="hidden" value="${stock.id_name}" name="product_id[]" required/>
                 <div class="customInputContainer">
                     <div class="customInput searchInput">
                         <input class="selectedData form-control u_product_name" value="${stock.product_name}" type="text" name="product_name[]" required/>
@@ -790,71 +929,85 @@ class modelUpdateOrder extends HTMLElement {
               </div>  
             </div>
             <div class="col-md-12 row">
-              <div class="col-md-4">
+              <div class="col-md-2">
                 <div class="form-group mb-2">
                   <label class="mt-0 mb-0 font-weight-bold text-dark">จำนวน</label>
                   <input type="text" class="u_count_product form-control" name="count_product[]" value="${stock.product_count}" placeholder="ชื่อสินค้า" required>
                 </div>
               </div>
-              <div class="col-md-3">
+              <div class="col-md-2">
                   <div class="form-group mb-2">
                     <label class="mt-0 mb-0 font-weight-bold text-dark">ต้นทุนต่อชิ้น</label>
                     <input type="text" class="u_price_product form-control" name="price_product[]" value="${stock.product_price}"  placeholder="ต้นทุนต่อชิ้น" required>
                   </div>
               </div>
-              <div class="col-md-2 align-self-center">
+              <div class="col-md-2">
                   <div class="form-group mb-2">
-                    <label class="mt-0 mb-0 font-weight-bold text-dark">ค่าใช้จ่าย</label>
-                    <input type="text" class="u_expenses form-control" name="expenses[]" value="${stock.expenses}" placeholder="ค่าใช้จ่าย" required>
+                    <label class="mt-0 mb-0 font-weight-bold text-dark">ราคากลาง/ลัง</label>
+                    <input type="text" class="u_price_center form-control" name="price_center[]" value="${stock.price_center}" id="" placeholder="ราคากลาง" required>
                   </div>
               </div>
-               <div class="col-md-3 align-self-center">
-                  <div class="form-group mb-2">
-                    <label class="mt-0 mb-0 font-weight-bold text-dark">จำนวนคอต</label>
-                    <input type="text" class="c_expenses form-control" name="count_cord[]" value="${stock.count_cord}" placeholder="จำนวนคอต" required>
-                  </div>
-                </div>
+              <div class="col-md-2 align-self-center">
+               <div class="form-group mb-2">
+                 <label class="mt-0 mb-0 font-weight-bold text-dark">จำนวนคอต</label>
+                 <input type="text" class="c_expenses form-control" name="count_cord[]" value="${stock.res_count_cord}" placeholder="จำนวนคอต" required>
+               </div>
+             </div>
+             <div class="col-md-2 align-self-center">
+               <div class="form-group mb-2">
+                 <label class="mt-0 mb-0 font-weight-bold text-dark">ค่าส่ง</label>
+                 <input type="text" class="c_shippingcost form-control" name="shipping_cost[]" value="${stock.res_shipping_cost}" placeholder="ค่าส่ง" required>
+               </div>
+             </div>
+             <div class="col-md-2 align-self-center">
+               <div class="form-group mb-2">
+                 <label class="mt-0 mb-0 font-weight-bold text-dark">ค่าใช้จ่าย</label>
+                 <input type="text" class="u_expenses form-control" name="expenses[]" value="${stock.expenses}" placeholder="ค่าใช้จ่าย" required>
+               </div>
+             </div>
             </div>`;
-        container.appendChild(div);
-        let product_name = div.querySelector(".u_product_name");
-        let count_product = div.querySelector(".u_count_product");
-        let price_product = div.querySelector(".u_price_product");
-        let expenses = div.querySelector(".u_expenses");
-        product_name.id = `e-product_name-${index}`;
-        count_product.id = `e-count_product-${index}`;
-        price_product.id = `e-price_product-${index}`;
-        expenses.id = `e-expenses-${index}`;
+          container.appendChild(div);
+          let product_name = div.querySelector(".u_product_name");
+          let count_product = div.querySelector(".u_count_product");
+          let price_product = div.querySelector(".u_price_product");
+          let expenses = div.querySelector(".u_expenses");
+          product_name.id = `e-product_name-${index}`;
+          count_product.id = `e-count_product-${index}`;
+          price_product.id = `e-price_product-${index}`;
+          expenses.id = `e-expenses-${index}`;
 
-        count_product.addEventListener("input", (e) => {
-          let value = e.target.value;
-          price_product.value = Number((expenses.value / value).toFixed(2));
-          updateGrandTotal(this.financedata);
-        });
-
-        price_product.addEventListener("input", (e) => {
-          let value = e.target.value;
-          expenses.value = Number((count_product.value * value).toFixed(2));
-          updateGrandTotal(this.financedata);
-        });
-
-        expenses.addEventListener("input", (e) => {
-          let value = e.target.value;
-          price_product.value = Number(
-            (value / count_product.value).toFixed(2)
-          );
-          updateGrandTotal(this.financedata);
-        });
-        container.addEventListener("click", (e) => {
-          if (e.target.classList.contains("remove-btn-2")) {
-            const index = e.target.dataset.index;
-            const targetDiv = document.querySelector(`[data-index="${index}"]`);
-            if (targetDiv) targetDiv.remove();
+          count_product.addEventListener("input", (e) => {
+            let value = e.target.value;
+            price_product.value = Number((expenses.value / value).toFixed(2));
             updateGrandTotal(this.financedata);
-          }
+          });
+
+          price_product.addEventListener("input", (e) => {
+            let value = e.target.value;
+            expenses.value = Number((count_product.value * value).toFixed(2));
+            updateGrandTotal(this.financedata);
+          });
+
+          expenses.addEventListener("input", (e) => {
+            let value = e.target.value;
+            price_product.value = Number(
+              (value / count_product.value).toFixed(2)
+            );
+            updateGrandTotal(this.financedata);
+          });
+          container.addEventListener("click", (e) => {
+            if (e.target.classList.contains("remove-btn-2")) {
+              const index = e.target.dataset.index;
+              const targetDiv = document.querySelector(
+                `[data-index="${index}"]`
+              );
+              if (targetDiv) targetDiv.remove();
+              updateGrandTotal(this.financedata);
+            }
+          });
         });
-      });
     } catch (e) {
-      console.error(`"Error loading orders:, ${e}`);
+      console.error(`"Error loading orders: ${e}`);
     }
   }
 
@@ -963,26 +1116,25 @@ $(document).on("click", "#update_order", function (e) {
   const container = document.querySelector("#formupdateorder");
   if (container) container.innerHTML = "";
 
-  $product_ids = $(this).data("id");
-  $order_name = $(this).data("ordername");
-  $total_cost = $(this).data("totalcost");
+  let order_name = $(this).data("ordername");
+  let total_cost = $(this).data("totalcost");
 
-  $priceorder = $(this).data("priceorder");
-  $slipimage = $(this).data("slipimage");
-  $dateorder = $(this).data("dateorder");
-  $("#order_id").val($product_ids);
-  $("#order_name").val($order_name);
-  $("#totalcost_orders").val($total_cost);
-  $("#defult-price").html(`เดิม ${$total_cost} บาท`);
-  $("#priceorder").html($priceorder);
-  $("#date_time_order").val($dateorder);
-  $("#img_default").val($slipimage);
+  let priceorder = $(this).data("priceorder");
+  let slipimage = $(this).data("slipimage");
+  let dateorder = $(this).data("dateorder");
+  $("#order_id").val(product_id);
+  $("#order_name").val(order_name);
+  $("#totalcost_orders").val(total_cost);
+  $("#defult-price").html(`เดิม ${total_cost} บาท`);
+  $("#priceorder").html(priceorder);
+  $("#date_time_order").val(dateorder);
+  $("#img_default").val(slipimage);
 
   e.preventDefault();
-  $("#slip_order").val($slipimage);
-  $(".slipt_order").attr("src", `../db/slip-orders/${$slipimage}`);
+  $("#slip_order").val(slipimage);
+  $(".slipt_order").attr("src", `../db/slip-orders/${slipimage}`);
   $(".ux-wrap").last().addClass("active");
-  $(".uimgname").html($slipimage);
+  $(".uimgname").html(slipimage);
 });
 
 $(document).on("click", "#confirmTrashOrder", function (e) {
@@ -1008,9 +1160,8 @@ $(document).on("click", "#confirmTrashOrder", function (e) {
           }
         );
         const responsedata = await responseapi.json();
-        console.log("s=", responsedata.status);
+
         if (responsedata.status === 201) {
-          console.log(responsedata);
           Swal.fire({
             title: "เรียบร้อย",
             text: "ลบ order นี้เรียบร้อยแล้ว",

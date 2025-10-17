@@ -94,13 +94,19 @@ const setImagePriviews = (
 };
 
 $(document).on("click", "#set_rate_price", function (e) {
+  $id_name = $(this).data("idname");
   $rate_id = $(this).data("id");
   $product_name = $(this).data("product");
   $productprice = $(this).data("productprice");
+  $productpricecenter = $(this).data("productpricecenter");
+  $countcord = $(this).data("countcord");
+  $shippingcost = $(this).data("shippingcost");
   $rate_price_storefront = $(this).data("storefront");
   $rate_price_vip = $(this).data("vip");
   $rate_price_dealers = $(this).data("dealers");
   $rate_price_delivery = $(this).data("delivery");
+  console.log({ id_name: $id_name });
+  $("#is_idname").val($id_name);
   $("#rate_id").val($rate_id);
   $("#product_name").val($product_name);
   $("#rate_price_vip").val($rate_price_vip);
@@ -110,6 +116,9 @@ $(document).on("click", "#set_rate_price", function (e) {
   $("#productname").html($product_name);
   $("#productnames").html($product_name);
   $("#productprice").html($productprice);
+  $("#productpricecenter").html($productpricecenter);
+  $("#countcord").html($countcord);
+  $("#shippingcost").html($shippingcost);
   e.preventDefault();
 });
 
@@ -132,6 +141,7 @@ class modelCreateRatePrice extends HTMLElement {
               <input type="hidden" name="status_form" value="create_rate" />
               <input type="hidden" name="rate_id" id="rate_id" />
               <input type="hidden" name="product_name" id="product_name" />
+              <input type="hidden" name="is_idname" id="is_idname" />
               <div class="modal-body">
                   <div class="col-md-12 row mb-3">
                     <div class="col-md-6">
@@ -159,11 +169,20 @@ class modelCreateRatePrice extends HTMLElement {
                         </div>
                     </div>
                     <div class="col-md-12 align-self-center row mt-4">
-                        <div class="col-md-6 " id="name_product">
+                        <div class="col-md-12 " id="name_product">
                             ชื่อสินค้า : <span id="productnames" class="font-weight-bold text-danger"></span>
                         </div>
-                        <div class="col-md-6" >
-                          ราคาต้นทุนชื้นละ : <span id="productprice" class="font-weight-bold text-danger"></span> บาท
+                        <div class="col-md-6 mt-2" >
+                          ราคาต้นทุนต่อลัง : <span id="productprice" class="font-weight-bold text-danger"></span> บาท
+                        </div>
+                        <div class="col-md-6 mt-2" >
+                          ราคากลางต่อลัง : <span id="productpricecenter" class="font-weight-bold text-danger"></span> บาท
+                        </div>
+                        <div class="col-md-6 mt-2" >
+                          จำนวนคอตต่อลัง : <span id="countcord" class="font-weight-bold text-danger"></span> คอต
+                        </div>
+                        <div class="col-md-6 mt-2" >
+                          ค่าส่งต่อลัง : <span id="shippingcost" class="font-weight-bold text-danger"></span> บาท
                         </div>
                     </div>
                   </div>
@@ -180,64 +199,6 @@ class modelCreateRatePrice extends HTMLElement {
   }
 }
 customElements.define("main-rate-price", modelCreateRatePrice);
-
-class modelUpdateStock extends HTMLElement {
-  connectedCallback() {
-    this.addEventListener("setId", (e) => {
-      this.productId = e.detail;
-      this.loadOrder(this.productId);
-    });
-    this.renderUpdateOrder();
-  }
-
-  async loadOrder(productId) {
-    try {
-      const response = await fetch(
-        `http://localhost/Rokok24Jam/system/backend/api/order.php?order_id=${productId}`,
-        {
-          method: "GET",
-          credentials: "include",
-        }
-      );
-
-      const data = await response.json();
-      // data.data.forEach((stock, index) => {
-
-      // });
-    } catch (e) {
-      console.error(`"Error loading orders:, ${e}`);
-    }
-  }
-  renderUpdateOrder() {
-    this.innerHTML = `
-      <div class="modal fade bd-example-modal-xl " id="modalFormUpdateRate2" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">
-        <div class="modal-dialog modal-lg modal-dialog-scrollable" role="document">
-          <div class="modal-content" id="">
-            <div class="modal-header">
-              <h5 class="modal-title row" id="exampleModalLongTitle">สินค้าที่สั่งซื้อ</p></h5>
-              <button type="button" class="close" id="close" data-dismiss="modal" aria-label="Close">
-                  <span aria-hidden="true">&times;</span>
-              </button>
-            </div>
-            <form id="form_update" method="post" action="backend/create_order.php" enctype="multipart/form-data">
-              <input type="hidden" name="status_form" value="update" />
-              <input type="text" id="id_stock" name="stock_id"/>
-              <div class="modal-body">
-                <div class="mt-2 row border">
-                </div>
-              </div>
-              <div class="modal-footer">
-                <button type="submit" class="btn btn-sm btn-success ml-auto mr-4">บันทึกข้อมูล</button>
-              </div>
-            </form>
-            
-          </div>
-        </div>
-      </div>
-    `;
-  }
-}
-customElements.define("main-update-stock", modelUpdateStock);
 
 $(document).on("click", "#update_product", function (e) {
   const product_id = $(this).data("id");

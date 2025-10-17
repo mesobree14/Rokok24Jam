@@ -38,7 +38,7 @@ if(!isset($_SESSION['users_data'])){
           <a class="ml-auto px-4 mx-4 py-1 w-22 btn-print" href="details/PDF/PDF_finance.php" target="_blank">
                 <i class="fas fa-file-code px-2"></i> PDF
           </a>
-          <div class="border">
+          <div class="">
             <button class="bd-none au-btn au-btn-icon au-btn--green au-btn--small" data-toggle="modal" 
                 data-target="#modalFormCreateOrder"
             >
@@ -48,31 +48,31 @@ if(!isset($_SESSION['users_data'])){
           </div>
           <div class="col-md-12 mt-4">
             <div class="table-responsive table-responsive-data2 mt-2">
-                        <table class="table table-data2 mydataTablePatron">
-                            <thead>
-                                <tr>
-                                    <th>ลำดับ</th>
-                                    <th style="width:22%">คำสั่งซื้อ</th>
-                                    <th>ค่าใช้จ่าย</th>
-                                    <th>รายการสินค้า</th>
-                                    <th>วันที่สั่งซื้อ <i class="fa-solid fa-arrow-up"></i></th>
-                                    <th>สลิปเงินทุน</th>
-                                    <th>จัดการ</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php
-                                    $get_order = mysqli_query($conn, "SELECT * FROM order_box ORDER BY create_at DESC")or die(mysqli_error());
-                                      foreach($get_order as $key => $res){
-                                          tablelistsetOrder(
-                                              ($key+1), $res['order_id'], $res['order_name'],$res['totalcost_order'],$res['count_order'],
-                                              $res['slip_order'],$res['date_time_order']
-                                            );
-                                      }
-                                ?>
-                            </tbody>
-                        </table> 
-                    </div>
+                <table class="table table-data2 mydataTablePatron">
+                    <thead>
+                        <tr>
+                            <th>ลำดับ</th>
+                            <th style="width:22%">คำสั่งซื้อ</th>
+                            <th>ค่าใช้จ่าย</th>
+                            <th>รายการสินค้า</th>
+                            <th>วันที่สั่งซื้อ <i class="fa-solid fa-arrow-up"></i></th>
+                            <th>สลิปเงินทุน</th>
+                            <th>จัดการ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                            $get_order = mysqli_query($conn, "SELECT * FROM order_box ORDER BY create_at DESC")or die(mysqli_error());
+                              foreach($get_order as $key => $res){
+                                  tablelistsetOrder(
+                                      ($key+1), $res['order_id'], $res['order_name'],$res['totalcost_order'],$res['count_order'],
+                                      $res['slip_order'],$res['date_time_order']
+                                    );
+                              }
+                        ?>
+                    </tbody>
+                </table> 
+            </div>
           </div>
       </div>
       <main-create-order></main-create-order>

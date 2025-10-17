@@ -17,7 +17,7 @@ if(!isset($_SESSION['users_data'])){
 }
 $sql = mysqli_query($conn,"SELECT * FROM order_box WHERE order_id=$ordersell_id") or die(mysqli_error($conn));
 $row_sql = mysqli_fetch_assoc($sql);
-$count = mysqli_query($conn,"SELECT COUNT(*) AS totals, SUM(product_count) AS counts FROM stock_product WHERE id_order=$ordersell_id") or die(mysqli_error($conn));
+$count = mysqli_query($conn,"SELECT COUNT(*) AS totals, SUM(product_count) AS counts,SUM(count_cord) AS count_cord FROM stock_product WHERE id_order=$ordersell_id") or die(mysqli_error($conn));
 $row_count = mysqli_fetch_assoc($count);
 $total_item = $row_count['totals'];
 $total_price = $row_count['counts'];
@@ -45,7 +45,7 @@ $total_price = $row_count['counts'];
           <div class="col-md-12 mt-4 card shadow-lg rounded">
             <?php listDetailOrderBuy(
                   $row_sql['order_id'], $row_sql['order_name'], $row_sql['totalcost_order'],$row_sql['date_time_order'],
-                  $row_sql['slip_order'],$row_count['totals'],$row_count['counts'],
+                  $row_sql['slip_order'],$row_count['totals'],$row_count['counts'],$row_count['count_cord']
                   ) ?>
           </div>
 
@@ -56,16 +56,18 @@ $total_price = $row_count['counts'];
                           <tr>
                               <th>ลำดับ</th> 
                               <th>สินค้า</th>
-                              <th>ราคาต้นทุนต่อชิ้น</th>
-                              <th>จำนวน</th>
+                              <th>ราคาต้นทุนต่อลัง</th>
+                              <th>ราคากลางต่อลัง</th>
+                              <th>จำนวนลัง</th>
                               <th>ราคารวม</th>
                           </tr>
                       </thead>
                       <tbody>
                           <?php
-                            $sql_product = mysqli_query($conn,"SELECT * FROM stock_product WHERE id_order=$ordersell_id") or die(mysqli_error($conn));
+                            $sql_product = mysqli_query($conn,"SELECT stock_product.product_id,stock_product.product_price,stock_product.price_center,stock_product.product_count,stock_product.count_cord,stock_product.expenses,
+                            name_product.product_name AS name_product  FROM stock_product LEFT JOIN name_product ON name_product.id_name = stock_product.product_name WHERE id_order=$ordersell_id") or die(mysqli_error($conn));
                             foreach($sql_product as $key => $res){
-                              listProductBuy(($key + 1), $res['product_id'],$res['product_name'],$res['product_price'], $res['product_count'],$res['expenses']);
+                              listProductBuy(($key + 1), $res['product_id'],$res['name_product'],$res['product_price'],$res['price_center'], $res['product_count'],$res['count_cord'],$res['expenses']);
                             }
                           ?>
                       </tbody>

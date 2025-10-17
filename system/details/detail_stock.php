@@ -1,12 +1,20 @@
 <?php
 session_name("session_rokok");
   session_start();
+
 include_once("../../backend/config.php");
 include_once("../../link/link-2.php");
 include_once("../../components/component.php");
-$product_name = $_GET['product_name'];
   error_reporting(E_ALL);
   ini_set('display_errors', 1);
+$id_productname = $_GET['id_productname'];
+$sql_nameP = mysqli_query($conn,"SELECT * FROM name_product WHERE id_name=$id_productname")or die(mysqli_error($conn));
+$acc_name = mysqli_fetch_assoc($sql_nameP);
+$sql = "SELECT SP.product_name, SP.product_price,SP.price_center,
+       COUNT(SP.product_id) AS total,SUM(SP.expenses) AS resutl_price, SUM(SP.product_count) AS total_count, SUM(SP.count_cord) AS count_cord
+       FROM stock_product SP WHERE SP.product_name='$id_productname' GROUP BY SP.product_name";
+       $selectStockProduct = mysqli_query($conn,$sql) or die(mysqli_error($conn));
+       $acc_fetch = mysqli_fetch_assoc($selectStockProduct);
 if(!isset($_SESSION['users_data'])){
   echo "
           <script>
@@ -33,20 +41,16 @@ if(!isset($_SESSION['users_data'])){
   <div class="page-wrapper chiller-theme toggled">
       <?php  navigationOfiicer("../"); ?>
        <main class="page-content mt-0">
-      <?php navbar("รายละเอียดสินค้า / ".$product_name."", "../"); ?>
+      <?php navbar("รายละเอียดสินค้า / ".$acc_name['product_name']."", "../"); ?>
       <div class="container-fluid row">
           <div class="col-md-12">
             <?php
-              $sql = "SELECT product_name, product_price,
-               COUNT(*) total,SUM(expenses) AS resutl_price, SUM(product_count) AS total_count FROM stock_product WHERE product_name='$product_name' GROUP BY product_name";
-               $selectStockProduct = mysqli_query($conn,$sql) or die(mysqli_error($conn));
-               $acc_fetch = mysqli_fetch_assoc($selectStockProduct);
 
-              $sql_sell = "SELECT productname,COUNT(*) AS counts, SUM(tatol_product) AS total_products, SUM(price_to_pay) AS prices FROM list_productsell WHERE productname='$product_name' GROUP BY productname";
+              $sql_sell = "SELECT productname,COUNT(*) AS counts, SUM(tatol_product) AS total_products, SUM(price_to_pay) AS prices FROM list_productsell WHERE productname='$id_productname' GROUP BY productname";
               $quer_sell = mysqli_query($conn,$sql_sell) or die(mysqli_error($conn));
               $acc_sell = mysqli_fetch_assoc($quer_sell);
  
-               detailStock($acc_fetch['product_name'],$acc_fetch['total_count'], $acc_fetch['resutl_price'],$acc_fetch['product_price'], $acc_sell['total_products'] ?? 0,$acc_sell['prices'] ?? 0,$acc_sell['counts'] ?? 0);
+               detailStock($acc_name['product_name'],$acc_fetch['total_count'],$acc_fetch['count_cord'], $acc_fetch['resutl_price'],$acc_fetch['product_price'], $acc_sell['total_products'] ?? 0,$acc_sell['prices'] ?? 0,$acc_sell['counts'] ?? 0);
             ?>
           </div>
           <div class="col-md-12 mt-4">
@@ -65,16 +69,17 @@ if(!isset($_SESSION['users_data'])){
                     <tbody>
                       <?php
                         
-                          $sql = "SELECT * FROM rate_price WHERE product_name='$product_name'";
+                          $sql = "SELECT * FROM rate_price WHERE id_productname=$id_productname";
                           $query = mysqli_query($conn,$sql) or die(mysqli_error($conn));
                           $rate_acc_fetch = mysqli_fetch_assoc($query);
                           if($rate_acc_fetch){
                             listRatePrice(
                               $rate_acc_fetch['rate_id'],$rate_acc_fetch['price_customer_frontstore'],$rate_acc_fetch['price_custommer_vip'],
-                              $rate_acc_fetch['price_customer_dealer'],$rate_acc_fetch['price_customer_deliver'],$product_name,$acc_fetch['product_price']
+                              $rate_acc_fetch['price_customer_dealer'],$rate_acc_fetch['price_customer_deliver'],$acc_name['product_name'],
+                              $acc_name['price'],$acc_fetch['id_name'],$acc_name['price_center'],$acc_name['count_cord'],$acc_name['shipping_cost']
                             );
                           }else{
-                            listRatePrice("","","","","",$product_name,$acc_fetch['product_price']);
+                            listRatePrice("","","","","",$acc_name['product_name'],$acc_name['price'],$acc_name['id_name'],$acc_name['price_center'],$acc_name['count_cord'],$acc_name['shipping_cost']);
                           }
                       ?>
                     </tbody>
@@ -100,7 +105,8 @@ if(!isset($_SESSION['users_data'])){
                               <th>ลำดับ</th> 
                               <th>ชื่อ</th>
                               <th>จากคำสั่งซื้อ</th>
-                              <th>ราคาต่อชิ้น</th>
+                              <th>ราคาต้นทุนต่อลัง</th>
+                              <th>ราคากลางต่อลัง</th>
                               <th>จำนวน</th>
                               <th>ราคารวม</th>
                               <th>เวลา</th>
@@ -108,11 +114,15 @@ if(!isset($_SESSION['users_data'])){
                       </thead>
                       <tbody>
                           <?php
-                              $get_sql = "SELECT * FROM stock_product LEFT JOIN order_box ON order_box.order_id = stock_product.id_order WHERE stock_product.product_name='$product_name' ORDER BY stock_product.create_at DESC";
+                              $get_sql = "SELECT stock_product.product_id,stock_product.product_count,stock_product.product_price,stock_product.count_cord,stock_product.price_center,
+                              order_box.order_name,order_box.date_time_order,name_product.id_name,name_product.product_name AS is_product_name FROM stock_product 
+                              LEFT JOIN name_product ON stock_product.product_name = name_product.id_name 
+                              LEFT JOIN order_box ON order_box.order_id = stock_product.id_order 
+                              WHERE stock_product.product_name='$id_productname' ORDER BY stock_product.create_at DESC";
                                $get_datastock = mysqli_query($conn, $get_sql) or die(mysqli_error($conn));
                                 foreach($get_datastock as $key => $res){
                                     tableDetailStock(
-                                        ($key+1), $res['product_id'], $res['product_name'],$res['product_count'],$res['product_price'],
+                                        ($key+1), $res['product_id'], $res['id_name'],$res['is_product_name'],$res['product_count'],$res['product_price'],$res['count_cord'],$res['price_center'],
                                         $res['order_name'],$res['date_time_order']
                                       );
                                 }
@@ -138,7 +148,7 @@ if(!isset($_SESSION['users_data'])){
                     </thead>
                     <tbody>
                 <?php
-                  $sell_sql = "SELECT * FROM list_productsell PS LEFT JOIN orders_sell OS ON OS.id_ordersell = PS.ordersell_id WHERE PS.productname='$product_name' ORDER BY PS.create_at DESC";
+                  $sell_sql = "SELECT * FROM list_productsell PS LEFT JOIN orders_sell OS ON OS.id_ordersell = PS.ordersell_id WHERE PS.productname='$id_productname' ORDER BY PS.create_at DESC";
                   $get_sqlsell = mysqli_query($conn,$sell_sql) or die(mysqli_error($conn));
                   foreach($get_sqlsell as $key => $res2){
                     tableDetailStockSell(($key+1),$res2['list_sellid'],$res2['productname'],$res2['ordersell_name'],$res2['tatol_product'],$res2['rate_customertype'],$res2['type_custom'],$res2['date_time_sell']);

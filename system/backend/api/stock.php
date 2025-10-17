@@ -10,8 +10,8 @@
      date_default_timezone_set("Asia/Bangkok");
      if($_SERVER['REQUEST_METHOD'] === "GET"){
           $sql_stock = "SELECT SP.product_name, RP.price_custommer_vip, RP.price_customer_frontstore, RP.price_customer_deliver, RP.price_customer_dealer,
-          COUNT(*) AS total, SUM(SP.product_count * SP.product_price) AS resutl_price, SUM(SP.product_count) AS total_count,LPS.tatol_products_sell
-          FROM stock_product SP LEFT JOIN rate_price RP ON SP.product_name = RP.product_name
+          COUNT(*) AS total, SUM(SP.product_count * SP.product_price) AS resutl_price, SUM(SP.product_count) AS total_count,LPS.tatol_products_sell,NP.product_name AS is_productname
+          FROM stock_product SP LEFT JOIN name_product NP ON SP.product_name = NP.id_name LEFT JOIN rate_price RP ON SP.product_name = RP.product_name
           LEFT JOIN (SELECT productname, SUM(tatol_product) AS tatol_products_sell FROM list_productsell GROUP BY productname) LPS ON SP.product_name = LPS.productname
           GROUP BY SP.product_name, RP.price_custommer_vip, RP.price_customer_frontstore, RP.price_customer_deliver, RP.price_customer_dealer
           ";

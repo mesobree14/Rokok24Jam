@@ -34,7 +34,7 @@ if(!isset($_SESSION['users_data'])){
   <div class="page-wrapper chiller-theme toggled">
     <?php  navigationOfiicer(); ?>
     <main class="page-content mt-0">
-      <?php navbar("รายการสินค้า"); ?>
+      <?php navbar("คลังสินค้า"); ?>
       <div class="container-fluid row">
           <div class="ml-auto border">
             <a href="details/PDF/PDF_stocks.php" target="_blank" class="font-weight-bold remove-btn ml-auto px-5 mt-4">
@@ -61,16 +61,16 @@ if(!isset($_SESSION['users_data'])){
                                 <?php
                                     $sql = "SELECT SP.product_name, 
                                      SUM(SP.product_count * SP.product_price) AS resutl_price, SUM(SP.product_count) AS total_count,
-                                     COALESCE(PS.tatol_product, 0) AS total_product, COALESCE(PS.price_to_pay, 0) AS total_pay
-                                     FROM stock_product SP LEFT JOIN (
-                                     SELECT productname, SUM(tatol_product) AS tatol_product, SUM(price_to_pay) AS price_to_pay FROM list_productsell GROUP BY productname) PS 
-                                     ON SP.product_name = PS.productname GROUP BY SP.product_name";
+                                     COALESCE(PS.tatol_product, 0) AS total_product, COALESCE(PS.price_to_pay, 0) AS total_pay, NP.product_name AS is_productname
+                                     FROM stock_product SP LEFT JOIN name_product NP ON SP.product_name = NP.id_name 
+                                     LEFT JOIN ( SELECT productname, SUM(tatol_product) AS tatol_product, SUM(price_to_pay) AS price_to_pay FROM list_productsell GROUP BY productname) PS 
+                                     ON SP.product_name = PS.productname GROUP BY SP.product_name, NP.product_name";
                                      $selectStockProduct = mysqli_query($conn,$sql) or die(mysqli_error($conn));
                                      $num_rows = mysqli_num_rows($selectStockProduct);
                                      if($num_rows > 0){
                                       foreach($selectStockProduct as $key => $res){
                                           tablelistStock(
-                                              ($key+1), $res['product_name'], 0,$res['total_count'],$res['resutl_price'],$res['total_product'] ?? 0,
+                                              ($key+1),$res['product_name'], $res['is_productname'], 0,$res['total_count'],$res['resutl_price'],$res['total_product'] ?? 0,
                                             );
                                       }
                                     }
