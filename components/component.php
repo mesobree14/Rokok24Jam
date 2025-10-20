@@ -258,9 +258,9 @@ function tablelistStock ($number, $id_product,$is_productname, $total_order, $to
     <tr>
       <td class=\"font-weight-bold\">$number</td>
       <td class=\"font-weight-bold\">$is_productname</td>
-      <td class=\"font-weight-bold\">$total_count ชิ้น</td> 
-      <td class=\"font-weight-bold\">$total_sell ชิ้น</td> 
-      <td class=\"font-weight-bold\">$remaining_amount ชิ้น</td> 
+      <td class=\"font-weight-bold\">$total_count ลัง</td> 
+      <td class=\"font-weight-bold\">$total_sell ลัง</td> 
+      <td class=\"font-weight-bold\">$remaining_amount ลัง</td> 
       <td class='text-center'>
           <div class=\"table-data-feature\" >
             <a class=\"item\" data-toggle=\"tootip\" data-placement=\"top\" title=\"จัดสรรทุน\" href=\"details/detail_stock.php?id_productname=$id_product \">
@@ -338,21 +338,21 @@ function detailStock($productname,$total_count,$count_cord,$total_price,$product
             <span>ค่าเฉลี่ยสินค้า $productname ลังละ</span>
             <p class=\"font-weight-bold res_text\"> ".number_format($Average1_piece ?? 0,2,'.',',')." บาท </p>
           </div>
-          <div class=\"col-lg-2 col-md-4 col-sm-6 col-12 m-2 p-3 bg-white info-box rounded\">
-            <span>จำนวนสิ้นค้าทัั้งหมด</span>
-                <p class=\"font-weight-bold res_text\"> $total_count ลัง ($count_cord คอต)</p>
-          </div>
           <div class=\"col-lg-3 col-md-4 col-sm-6 col-12 m-2 p-3 bg-white info-box rounded\">
+            <span>จำนวนสิ้นค้าทัั้งหมด</span>
+                <p class=\"font-weight-bold res_text\">". number_format($total_count) ." ลัง (".number_format($count_cord ?? 0)."คอต)</p>
+          </div>
+          <div class=\"col-lg-2 col-md-4 col-sm-6 col-12 m-2 p-3 bg-white info-box rounded\">
             <span>ต้นทุนทั้งหมด</span>
             <p class=\"font-weight-bold res_text\"> ".number_format($total_price ?? 0,2,'.',',')."  บาท</p>
           </div>
           <div class=\"col-lg-3 col-md-4 col-sm-6 col-12 m-2 p-3 bg-white info-box rounded\">
                 <span>จำนวนสินค้าที่ขายไปแล้ว</span>
-                <p class=\"font-weight-bold res_text\"> $count_sell  ชิ้น</p>
+                <p class=\"font-weight-bold res_text\"> ".number_format($count_sell)."  ลัง</p>
           </div>
           <div class=\"col-lg-3 col-md-4 col-sm-6 col-12 m-2 p-3 bg-white info-box rounded\">
                 <span>สินค้าที่เหลือ</span>
-                <p class=\"font-weight-bold res_text\"> $remaining_products  ชิ้น</p>
+                <p class=\"font-weight-bold res_text\"> ".number_format($remaining_products)."  ลัง</p>
           </div>
           <div class=\"col-lg-3 col-md-4 col-sm-6 col-12 m-2 p-3 bg-white info-box rounded\">
             <span>ราคาที่ขายได้</span>
@@ -365,7 +365,7 @@ function detailStock($productname,$total_count,$count_cord,$total_price,$product
           </div>
           <div class=\"col-lg-3 col-md-4 col-sm-6 col-12 m-2 p-3 bg-white info-box rounded\">
             <span>จำนวนครั้งที่ขายได้</span>
-            <p class=\"font-weight-bold res_text\"> $number_of_timessold ครั้ง</p>
+            <p class=\"font-weight-bold res_text\">". number_format($number_of_timessold)." ครั้ง</p>
           </div>
         </div>
 

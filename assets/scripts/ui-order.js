@@ -623,7 +623,7 @@ const uiFormUpdate = `
         </div>
         <div class="form-group mb-2">
           <label class="mt-0 mb-0 font-weight-bold text-dark labelCount"></label>
-          <input class="selectedId form-control c_product_id"  type="hidden" name="product_id[]" required/>
+          <input class="selectId form-control c_product_id"  type="hidden" name="product_id[]" required/>
           <div class="customInputContainer">
               <div class="customInput searchInput">
                   <input class="selectedData form-control u_product_name"  type="text" name="product_name[]" required/>
@@ -633,6 +633,9 @@ const uiFormUpdate = `
               </div>
           </div>
         </div>  
+        <div class="col-12 row">
+          <span class="ures_expenses text-danger ml-auto"></span>
+        </div> 
       </div>
       <div class="col-md-12 row">
         <div class="col-md-2">
@@ -650,19 +653,19 @@ const uiFormUpdate = `
         <div class="col-md-2">
             <div class="form-group mb-2">
               <label class="mt-0 mb-0 font-weight-bold text-dark">ราคากลาง/ลัง</label>
-              <input type="text" class="c_price_center form-control" name="price_center[]" id="" placeholder="ราคาต้นทุน" required>
+              <input type="text" class="u_price_center form-control" name="price_center[]" id="" placeholder="ราคาต้นทุน" required>
             </div>
         </div>
         <div class="col-md-2 align-self-center">
           <div class="form-group mb-2">
-            <label class="mt-0 mb-0 font-weight-bold text-dark">จำนวนคอต</label>
-            <input type="text" class="c_expenses form-control" name="count_cord[]" placeholder="จำนวนคอต" required>
+            <label class="mt-0 mb-0 font-weight-bold text-dark">จำนวนคอต <span class="uis_countcord text-danger"></span> / 1 ลัง</label>
+            <input type="text" class="u_count_cord form-control" name="count_cord[]" placeholder="จำนวนคอต" required>
           </div>
         </div>
         <div class="col-md-2 align-self-center">
           <div class="form-group mb-2">
-            <label class="mt-0 mb-0 font-weight-bold text-dark">ค่าส่ง</label>
-            <input type="text" class="c_shippingcost form-control" name="shipping_cost[]" placeholder="ค่าส่ง" required>
+            <label class="mt-0 mb-0 font-weight-bold text-dark">ค่าส่ง <span class="uis_shipping text-danger"></span> /1 ลัง</label>
+            <input type="text" class="u_shippingcost form-control" name="shipping_cost[]" placeholder="ค่าส่ง" required>
           </div>
         </div>
         <div class="col-md-2 align-self-center">
@@ -765,13 +768,15 @@ class modelUpdateOrder extends HTMLElement {
     }
   }
 
-  updateData(data_product, index, group) {
+  updateData(data_product, id_products, index, group) {
     let selectedData = group.querySelector(`.IsselectedData-${index}`);
+    let IsSelectId = group.querySelector(`.IsSelectId-${index}`);
     let customInputContainer = group.querySelector(
       `.IscustomInputContainer-${index}`
     );
     const ul = group.querySelector("ul");
     selectedData.value = data_product ?? "";
+    IsSelectId.value = id_products ?? "";
     for (const li of group.querySelectorAll("li.selected")) {
       li.classList.remove("selected");
     }
@@ -792,14 +797,39 @@ class modelUpdateOrder extends HTMLElement {
       let customInput = group.querySelector(`.customInput`);
       let customInputContainer = group.querySelector(".customInputContainer");
       let selectedData = group.querySelector(".selectedData");
+      let selectId = group.querySelector(".selectId");
       let serchInput = group.querySelector(".searchInput input");
       let ul = group.querySelector(`.options ul`);
 
       customInput.classList.add(`IscustomInput-${index}`);
       customInputContainer.classList.add(`IscustomInputContainer-${index}`);
       selectedData.classList.add(`IsselectedData-${index}`);
+      selectId.classList.add(`IsSelectId-${index}`);
       serchInput.classList.add(`IsserchInput-${index}`);
       ul.classList.add(`Isoptions-${index}`);
+
+      let product_name = group.querySelector(".u_product_name");
+      let count_product = group.querySelector(".u_count_product");
+      let price_product = group.querySelector(".u_price_product");
+      let price_center = group.querySelector(".u_price_center");
+      let count_cords = group.querySelector(".u_count_cord");
+      let shippings_cost = group.querySelector(".u_shippingcost");
+      let ures_expenses = group.querySelector(".ures_expenses");
+
+      let uis_countcord = group.querySelector(".uis_countcord");
+      let uis_shipping = group.querySelector(".uis_shipping");
+      let expenses = group.querySelector(".u_expenses");
+      product_name.id = `e-product_name-${index}`;
+      count_product.id = `e-count_product-${index}`;
+      price_product.id = `e-price_product-${index}`;
+      price_center.id = `e-price_center-${index}`;
+      count_cords.id = `e-count_cords-${index}`;
+      shippings_cost.id = `e-shippings_cost-${index}`;
+      expenses.id = `e-expenses-${index}`;
+
+      uis_countcord.id = `e-uis_countcord-${index}`;
+      uis_shipping.id = `e-uis_shipping-${index}`;
+      ures_expenses.id = `e-ures_expenses-${index}`;
 
       window.addEventListener("click", (e) => {
         const searchInputEl = group.querySelector(`.IssearchInput-${index}`);
@@ -822,11 +852,15 @@ class modelUpdateOrder extends HTMLElement {
         const row = document.createElement("div");
         row.classList.add("row");
         let span = document.createElement("span");
+        let pre = document.createElement("p");
+        pre.style.display = "none";
         let small = document.createElement("small");
         span.textContent = product.product_name;
+        pre.textContent = product.id_name;
         small.textContent = `เหลืออีก ${product.countcord_product} คอต`;
         small.classList.add("ml-auto");
         row.appendChild(span);
+        row.appendChild(pre);
         row.appendChild(small);
         li.appendChild(row);
         ul.appendChild(li);
@@ -835,12 +869,16 @@ class modelUpdateOrder extends HTMLElement {
       ul.querySelectorAll("li").forEach((li) => {
         li.addEventListener("click", () => {
           let spanTxt = li.querySelector("span").innerText;
+          let spanId = li.querySelector("p").innerText;
+          selectId.value = spanId;
           selectedData.value = spanTxt;
+
           for (const li of document.querySelectorAll("li.selected")) {
             li.classList.remove("selected");
           }
           li.classList.add("selected");
           customInputContainer.classList.toggle("show");
+          this.getDataLists(spanId, index, group);
         });
       });
       serchInput.addEventListener("keyup", () => {
@@ -850,40 +888,79 @@ class modelUpdateOrder extends HTMLElement {
         );
         ul.innerHTML = "";
         if (searched_product.length === 0) {
-          ul.innerHTML = "";
+          ul.innerHTML = `<p style='margin-top: 1rem;'>
+                          ไม่มีข้อมูล
+                        </p>`;
           return;
         }
         searched_product.forEach((data) => {
           const li = document.createElement("li");
-          li.textContent = data.product_name;
+          li.classList.add("row");
+          let spannames = document.createElement("span");
+          let IdInLi = document.createElement("p");
+          let smallNo2 = document.createElement("small");
+          IdInLi.textContent = data.id_name;
+          spannames.classList = "productnames";
+          IdInLi.className = "id-hedden";
+          IdInLi.style.display = "none";
+          //li.textContent = data.product_name;
+          spannames.textContent = data.product_name;
+          smallNo2.textContent = `เหลืออีก ${data.countcord_product} คอต`;
+          smallNo2.classList.add("ml-auto");
+          li.appendChild(spannames);
+          li.appendChild(IdInLi);
+          li.appendChild(smallNo2);
+
           li.addEventListener("click", (e) => {
-            this.updateData(e.target.textContent, index, group);
+            let IsIdName = li.querySelector(".id-hedden").textContent;
+            let IsProductName = li.querySelector(".productnames").textContent;
+            console.log({ IsIdName });
+            this.updateData(IsProductName, IsIdName, index, group);
+            this.getDataLists(IsIdName, index, group);
           });
           ul.appendChild(li);
         });
       });
-      let product_name = group.querySelector(".u_product_name");
-      let count_product = group.querySelector(".u_count_product");
-      let price_product = group.querySelector(".u_price_product");
-      let expenses = group.querySelector(".u_expenses");
-      product_name.id = `e-product_name-${index}`;
-      count_product.id = `e-count_product-${index}`;
-      price_product.id = `e-price_product-${index}`;
-      expenses.id = `e-expenses-${index}`;
+
       count_product.addEventListener("input", (e) => {
         let value = e.target.value;
-        price_product.value = Number((expenses.value / value).toFixed(2));
+        //price_product.value = Number((expenses.value / value).toFixed(2));
+        count_cords.value = Number(value * Number(uis_countcord.textContent));
+        shippings_cost.value = Number(
+          value * Number(uis_shipping.textContent)
+        ).toFixed(2);
+        expenses.value =
+          Number((price_product.value * value).toFixed(2)) +
+          Number(shippings_cost.value);
+        ures_expenses.textContent = `สินค้า(${Number(
+          (price_product.value * value).toFixed(2)
+        )}) + ค่าส่ง(${Number(shippings_cost.value).toFixed(2)})`;
         updateGrandTotal(this.financedata);
       });
 
       price_product.addEventListener("input", (e) => {
         let value = e.target.value;
-        expenses.value = Number((count_product.value * value).toFixed(2));
+        expenses.value =
+          Number((count_product.value * value).toFixed(2)) +
+          Number(shippings_cost.value);
+        ures_expenses.textContent = `สินค้า(${Number(
+          (count_product.value * value).toFixed(2)
+        )}) + ค่าส่ง(${Number(shippings_cost.value).toFixed(2)})`;
         updateGrandTotal(this.financedata);
+      });
+      shippings_cost.addEventListener("input", (e) => {
+        let value = e.target.value;
+        expenses.value =
+          Number((count_product.value * price_product.value).toFixed(2)) +
+          Number(value);
+        ures_expenses.textContent = `สินค้า(${Number(
+          (count_product.value * price_product.value).toFixed(2)
+        )}) + ค่าส่ง(${Number(value).toFixed(2)})`;
       });
 
       expenses.addEventListener("input", (e) => {
-        let value = e.target.value;
+        let value =
+          Number(e.target.value) - Number(shippings_cost.value).toFixed(2);
         price_product.value = Number((value / count_product.value).toFixed(2));
         updateGrandTotal(this.financedata);
       });
@@ -907,84 +984,136 @@ class modelUpdateOrder extends HTMLElement {
         data.data.forEach((stock, index) => {
           const div = document.createElement("div");
           div.className = "formGroup col-md-12 border mb-3";
-          div.dataset.index = stock.product_id;
+          div.dataset.index = stock?.product_id;
           this.countterForm();
           div.innerHTML = `
             <div class="col-md-12" >
               <div class=row col-12">
-               <button type="button" class="remove-btn-2 ml-auto my-2" data-index="${stock.product_id}">❌ ลบ</button>
+               <button type="button" class="remove-btn-2 ml-auto my-2" data-index="${
+                 stock?.product_id
+               }">❌ ลบ</button>
               </div>
-              <input type="hidden" name="product_id[]" value="${stock.product_id}" />
+              <input type="hidden" name="product_id[]" value="${
+                stock?.product_id
+              }" />
               <div class="form-group mb-2">
                 <label class="mt-0 mb-0 font-weight-bold text-dark"></label>
-                <input class="form-control c_product_id"  type="hidden" value="${stock.id_name}" name="product_id[]" required/>
+                <input class="selectId form-control c_product_id" name="is_idproduct[]"  type="hidden" value="${
+                  stock?.id_name
+                }" name="product_id[]" required/>
                 <div class="customInputContainer">
                     <div class="customInput searchInput">
-                        <input class="selectedData form-control u_product_name" value="${stock.product_name}" type="text" name="product_name[]" required/>
+                        <input class="selectedData form-control u_product_name" value="${
+                          stock?.product_name
+                        }" type="text" name="product_name[]" required/>
                     </div>
                     <div class="options">
                         <ul></ul>
                     </div>
                 </div
               </div>  
+              <div class="col-12 row">
+                <span class="ures_expenses text-danger ml-auto"></span>
+              </div> 
             </div>
             <div class="col-md-12 row">
               <div class="col-md-2">
                 <div class="form-group mb-2">
-                  <label class="mt-0 mb-0 font-weight-bold text-dark">จำนวน</label>
-                  <input type="text" class="u_count_product form-control" name="count_product[]" value="${stock.product_count}" placeholder="ชื่อสินค้า" required>
+                  <label class="mt-0 mb-0 font-weight-bold text-dark">จำนวนลัง</label>
+                  <input type="text" class="u_count_product form-control" name="count_product[]" value="${
+                    stock?.product_count
+                  }" placeholder="ชื่อสินค้า" required>
                 </div>
               </div>
               <div class="col-md-2">
                   <div class="form-group mb-2">
-                    <label class="mt-0 mb-0 font-weight-bold text-dark">ต้นทุนต่อชิ้น</label>
-                    <input type="text" class="u_price_product form-control" name="price_product[]" value="${stock.product_price}"  placeholder="ต้นทุนต่อชิ้น" required>
+                    <label class="mt-0 mb-0 font-weight-bold text-dark">ต้นทุน/ลัง</label>
+                    <input type="text" class="u_price_product form-control" name="price_product[]" value="${
+                      stock?.product_price
+                    }"  placeholder="ต้นทุนต่อชิ้น" required>
                   </div>
               </div>
               <div class="col-md-2">
                   <div class="form-group mb-2">
                     <label class="mt-0 mb-0 font-weight-bold text-dark">ราคากลาง/ลัง</label>
-                    <input type="text" class="u_price_center form-control" name="price_center[]" value="${stock.price_center}" id="" placeholder="ราคากลาง" required>
+                    <input type="text" class="u_price_center form-control" name="price_center[]" value="${
+                      stock?.price_center
+                    }" id="" placeholder="ราคากลาง" required>
                   </div>
               </div>
               <div class="col-md-2 align-self-center">
                <div class="form-group mb-2">
-                 <label class="mt-0 mb-0 font-weight-bold text-dark">จำนวนคอต</label>
-                 <input type="text" class="c_expenses form-control" name="count_cord[]" value="${stock.res_count_cord}" placeholder="จำนวนคอต" required>
+                 <label class="mt-0 mb-0 font-weight-bold text-dark">จำนวนคอต <span class="uis_countcord text-danger">${
+                   stock?.res_count_cord / stock?.product_count
+                 }</span> / 1 ลัง</label>
+                 <input type="text" class="u_count_cord form-control" name="count_cord[]" value="${
+                   stock?.res_count_cord
+                 }" placeholder="จำนวนคอต" required>
                </div>
              </div>
              <div class="col-md-2 align-self-center">
                <div class="form-group mb-2">
-                 <label class="mt-0 mb-0 font-weight-bold text-dark">ค่าส่ง</label>
-                 <input type="text" class="c_shippingcost form-control" name="shipping_cost[]" value="${stock.res_shipping_cost}" placeholder="ค่าส่ง" required>
+                 <label class="mt-0 mb-0 font-weight-bold text-dark">ค่าส่ง <span class="uis_shipping text-danger">${
+                   stock?.res_shipping_cost / stock?.product_count
+                 }</span> /1 ลัง</label>
+                 <input type="text" class="u_shippingcost form-control" name="shipping_cost[]" value="${
+                   stock?.res_shipping_cost
+                 }" placeholder="ค่าส่ง" required>
                </div>
              </div>
              <div class="col-md-2 align-self-center">
                <div class="form-group mb-2">
                  <label class="mt-0 mb-0 font-weight-bold text-dark">ค่าใช้จ่าย</label>
-                 <input type="text" class="u_expenses form-control" name="expenses[]" value="${stock.expenses}" placeholder="ค่าใช้จ่าย" required>
+                 <input type="text" class="u_expenses form-control" name="expenses[]" value="${
+                   stock?.expenses
+                 }" placeholder="ค่าใช้จ่าย" required>
                </div>
              </div>
             </div>`;
           container.appendChild(div);
           let product_name = div.querySelector(".u_product_name");
           let count_product = div.querySelector(".u_count_product");
+          let count_cords = div.querySelector(".u_count_cord");
           let price_product = div.querySelector(".u_price_product");
+          let price_center = div.querySelector(".u_price_center");
+          let u_shippingcost = div.querySelector(".u_shippingcost");
           let expenses = div.querySelector(".u_expenses");
+
+          let is_countcords = div.querySelector(".uis_countcord");
+          let is_shipping = div.querySelector(".uis_shipping");
+
           product_name.id = `e-product_name-${index}`;
           count_product.id = `e-count_product-${index}`;
+          count_cords.id = `e-count_cords-${index}`;
           price_product.id = `e-price_product-${index}`;
+          price_center.id = `e-price_center-${index}`;
+          u_shippingcost.id = `e-u_shippingcost-${index}`;
           expenses.id = `e-expenses-${index}`;
+
+          is_countcords.id = `e-is_countcords-${index}`;
+          is_shipping.id = `e-is_shipping-${index}`;
 
           count_product.addEventListener("input", (e) => {
             let value = e.target.value;
-            price_product.value = Number((expenses.value / value).toFixed(2));
+            //price_product.value = Number((expenses.value / value).toFixed(2));
+            count_cords.value = Number(
+              value * Number(is_countcords.textContent)
+            );
+            u_shippingcost.value = Number(
+              value * Number(is_shipping.textContent)
+            ).toFixed(2);
+
+            expenses.value =
+              Number((price_product.value * value).toFixed(2)) +
+              Number(u_shippingcost.value);
+
             updateGrandTotal(this.financedata);
           });
 
           price_product.addEventListener("input", (e) => {
             let value = e.target.value;
             expenses.value = Number((count_product.value * value).toFixed(2));
+            //count_cords.value = Number(value * Number())
             updateGrandTotal(this.financedata);
           });
 
@@ -1028,6 +1157,25 @@ class modelUpdateOrder extends HTMLElement {
       });
       this.countterForm();
     });
+  }
+  getDataLists(ProductName_Id, indexs, Groups) {
+    let price_center = Groups.querySelector(".u_price_center");
+    let price_product = Groups.querySelector(".u_price_product");
+    let is_countcord = Groups.querySelector(".uis_countcord");
+    let is_shipping = Groups.querySelector(".uis_shipping");
+
+    price_product.id = `e-price_product-${indexs}`;
+    price_center.id = `e-price_center-${indexs}`;
+    is_countcord.id = `ui-count_cords-${indexs}`;
+    is_shipping.id = `ui-is_shipping-${indexs}`;
+    let isDataProduct = this.stockproductAll.filter((data) =>
+      data.id_name.toLowerCase().includes(ProductName_Id.toLowerCase())
+    );
+    price_product.value = isDataProduct[0].price;
+    price_center.value = isDataProduct[0].price_center;
+    is_countcord.textContent = isDataProduct[0].count_cord;
+    is_shipping.textContent = `${isDataProduct[0].shipping_cost}`;
+    console.log({ is_countcord, is_shipping });
   }
   renderUpdateOrder() {
     this.innerHTML = `

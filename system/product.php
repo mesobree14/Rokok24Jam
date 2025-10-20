@@ -45,14 +45,14 @@ if(!isset($_SESSION['users_data'])){
             </button>
           </div>
           <div class="col-md-12 mt-4"> 
-            <div class="col-xl-9 col-md-12">
+            <div class="col-xl-10 col-md-12">
               <div class="table-responsive table-responsive-data2 mt-2">
                   <table class="table table-data2 mydataTablePatron">
                       <thead>
                           <tr>
                               <th></th>
                               <th>ลำดับ</th>
-                              <th style="width:30%">ซื้อสินค้า</th>
+                              <th style="width:25%">ซื้อสินค้า</th>
                               <th>ราคาต้นทุนต่อลัง</th>
                               <th>ราคากลางต่อลัง</th>
                               <th>จำนวนคอตต่อลัง</th>

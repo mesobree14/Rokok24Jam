@@ -50,10 +50,10 @@ if(!isset($_SESSION['users_data'])){
                                     <th style="width:5%">ลำดับ</th>
                                     <th style="">ชื่อ สินค้า</th>
                                     <!-- <th>จำนวนครั้งที่ซื้อ</th> -->
-                                    <th style="width:15%">จำนวนทั้งหมด ชิ้น</th>
+                                    <th style="width:15%">จำนวนทั้งหมด ลัง</th>
                                     <!-- <th>ต้นทุนทั้งหมด บ.</th> -->
-                                    <th style="width:15%">ขายไปแล้ว ชิ้น.</th>
-                                    <th style="width:15%">สินค้าคงเหลือ</th>
+                                    <th style="width:15%">ขายไปแล้ว ลัง.</th>
+                                    <th style="width:15%">สินค้าคงเหลือ ลัง</th>
                                     <th style="width:5%">จัดการ</th>
                                 </tr> 
                             </thead>

@@ -76,7 +76,7 @@ if(!isset($_SESSION['users_data'])){
                             listRatePrice(
                               $rate_acc_fetch['rate_id'],$rate_acc_fetch['price_customer_frontstore'],$rate_acc_fetch['price_custommer_vip'],
                               $rate_acc_fetch['price_customer_dealer'],$rate_acc_fetch['price_customer_deliver'],$acc_name['product_name'],
-                              $acc_name['price'],$acc_fetch['id_name'],$acc_name['price_center'],$acc_name['count_cord'],$acc_name['shipping_cost']
+                              $acc_name['price'],$acc_name['id_name'],$acc_name['price_center'],$acc_name['count_cord'],$acc_name['shipping_cost']
                             );
                           }else{
                             listRatePrice("","","","","",$acc_name['product_name'],$acc_name['price'],$acc_name['id_name'],$acc_name['price_center'],$acc_name['count_cord'],$acc_name['shipping_cost']);
