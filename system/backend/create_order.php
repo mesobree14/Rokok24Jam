@@ -134,11 +134,7 @@
               while($row = mysqli_fetch_assoc($res_ponse)){
                 $old_product[] = $row['product_id'];
               }
-              echo "old_product : ";
-              echo "<pre>";
-              print_r($old_product);
-              echo "</pre>";
-              echo "<br/><hr/>";
+
               $form_product_id = $_POST['is_idproduct'];
               $product_name = $_POST['product_name'];
               $product_id = isset($_POST['product_id']) ? $_POST['product_id'] : [];
@@ -152,10 +148,6 @@
               $add_id = [];
               $trash_id = [];
               $newIds = [];
-              echo "<pre>";
-              print_r($form_product_id);
-              echo "</pre>";
-              echo "<br/><hr/>";
 
               foreach($form_product_id as $key => $pname_id){
                
@@ -170,14 +162,6 @@
                 $p_shipping_cost = $shipping_cost[$key];
 
                 if($pid){
-                  echo "'UPDATE stock_product SET product_name=is_id_product";
-                  echo "<br/>";
-                  echo "is_id_product:";
-                  echo $is_id_product;
-                  echo "<br/>";
-                  echo "is_pname : ";
-                  echo $is_pname;
-                  echo "<br/><hr/>";
                   $sql_edit = "UPDATE stock_product SET product_name='$is_id_product', product_count='$pcount', product_price='$pprice',price_center='$p_price_center',count_cord='$p_count_cord',shipping_cost='$p_shipping_cost', expenses='$p_exp' ,id_adder='$id_user' WHERE product_id=$pid AND id_order=$order_id";
                   $query_edit = mysqli_query($conn,$sql_edit) or die(mysqli_error($conn));
                   if($query_edit){
@@ -188,13 +172,7 @@
                     $all_success = false;
                   }
                 }else{
-                  echo "insert <b/>";
-                  echo "is_id_product : ";
-                  echo $is_id_product;
-                  echo "<br/>";
-                  echo "is_pname : ";
-                  echo $is_pname;
-                  echo "<br/><hr/>";
+
                   $sql_insert = "INSERT INTO stock_product(product_name,product_count,product_price,price_center,count_cord,shipping_cost,expenses,id_adder,id_order,create_at)
                   VALUES ('$is_id_product','$pcount','$pprice','$p_price_center','$p_count_cord','$p_shipping_cost','$p_exp','$id_user','$order_id','$day_add')";
                   $query_inserts = mysqli_query($conn,$sql_insert) or die(mysqli_error($conn));
@@ -209,20 +187,8 @@
                 }
               }
               $id_to_delete = array_diff($old_product, $newIds);
-              echo "id_to_delete:<pre>"; 
-                print_r($id_to_delete);
-              echo "</pre>";
-              echo "<br/>";
-              echo "newIds:<pre>"; 
-                print_r($newIds);
-              echo "</pre>";
-              echo "<br/><hr/>";
               if(!empty($id_to_delete)){
                 $ids = implode(",", $id_to_delete);
-                echo "delete <br/>";
-                echo "id : ";
-                echo $ids;
-                echo "<br/>";
                 $query_del = mysqli_query($conn,"DELETE FROM stock_product WHERE product_id IN ($ids)");
                 if($query_del){
                   $count_delete++;
@@ -232,21 +198,18 @@
                 }
               }
               if($all_success){
-                // echo "<script type=\"text/javascript\">
-                //         MySetSweetAlert('success', 'เรียบร้อย', 'อัปเดต: $coun_update, เพิ่ม: $count_insert, ลบ: $count_delete รายการ', '../orders.php')
-                //     </script>";
-                echo "MySetSweetAlert('success', 'เรียบร้อย', 'อัปเดต: $coun_update, เพิ่ม: $count_insert, ลบ: $count_delete รายการ')";
+                echo "<script type=\"text/javascript\">
+                        MySetSweetAlert('success', 'เรียบร้อย', 'อัปเดต: $coun_update, เพิ่ม: $count_insert, ลบ: $count_delete รายการ', '../orders.php')
+                    </script>";
               }else{
-                // echo "<script type=\"text/javascript\">
-                //     MySetSweetAlert('error', 'เกิดข้อผิดพลาด', 'ไม่สามารถทำงานบางส่วนได้', '../orders.php')
-                // </script>";
-                echo "MySetSweetAlert('error', 'เกิดข้อผิดพลาด', 'ไม่สามารถทำงานบางส่วนได้')";
+                echo "<script type=\"text/javascript\">
+                    MySetSweetAlert('error', 'เกิดข้อผิดพลาด', 'ไม่สามารถทำงานบางส่วนได้', '../orders.php')
+                </script>";
               }
             }else{
-              // echo "<script type=\"text/javascript\">
-              //     MySetSweetAlert('error', 'เกิดข้อผิดพลาด', 'ไม่สามารถอัปเดต order ได้', '../orders.php')
-              // </script>";
-              echo "ไม่สามารถอัปเดต order ได้";
+              echo "<script type=\"text/javascript\">
+                  MySetSweetAlert('error', 'เกิดข้อผิดพลาด', 'ไม่สามารถอัปเดต order ได้', '../orders.php')
+              </script>";
               exit;
             }
           }

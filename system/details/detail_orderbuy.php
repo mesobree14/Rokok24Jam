@@ -59,15 +59,17 @@ $total_price = $row_count['counts'];
                               <th>ราคาต้นทุนต่อลัง</th>
                               <th>ราคากลางต่อลัง</th>
                               <th>จำนวนลัง</th>
-                              <th>ราคารวม</th>
+                              <th>ค่าสินค้าทั้งหมด</th>
+                              <th>ค่าส่งทั้งหมด</th>
+                              <th>ราคาทั้งหมด</th>
                           </tr>
                       </thead>
                       <tbody>
                           <?php
-                            $sql_product = mysqli_query($conn,"SELECT stock_product.product_id,stock_product.product_price,stock_product.price_center,stock_product.product_count,stock_product.count_cord,stock_product.expenses,
+                            $sql_product = mysqli_query($conn,"SELECT stock_product.product_id,stock_product.product_price,stock_product.price_center,stock_product.product_count,stock_product.count_cord,stock_product.expenses,stock_product.shipping_cost,
                             name_product.product_name AS name_product  FROM stock_product LEFT JOIN name_product ON name_product.id_name = stock_product.product_name WHERE id_order=$ordersell_id") or die(mysqli_error($conn));
                             foreach($sql_product as $key => $res){
-                              listProductBuy(($key + 1), $res['product_id'],$res['name_product'],$res['product_price'],$res['price_center'], $res['product_count'],$res['count_cord'],$res['expenses']);
+                              listProductBuy(($key + 1), $res['product_id'],$res['name_product'],$res['product_price'],$res['price_center'], $res['product_count'],$res['count_cord'],$res['expenses'],$res['shipping_cost']);
                             }
                           ?>
                       </tbody>

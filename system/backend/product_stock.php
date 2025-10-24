@@ -47,7 +47,7 @@
             $url_encode = urlencode($_POST['product_name']);
             
             if(!$rate_id){
-              $sql_rate = "INSERT INTO rate_price (id_productname,product_name,id_adder,price_custommer_vip,price_customer_frontstore,price_customer_deliver,price_customer_dealer,create_at)
+              $sql_rate = "INSERT INTO rate_price (id_productname,product_name,id_adder,price_levels_one,price_customer_frontstore,price_customer_deliver,price_customer_dealer,create_at)
                   VALUES ('$is_idname','$product_name','$id_user','$rate_vip','$rate_storefront','$rate_delivery','$rate_dealers','$day_add')";
                 $query_insert = mysqli_query($conn,$sql_rate) or die(mysqli_error($conn));
                 if($query_insert){
@@ -61,7 +61,7 @@
                 }
             }else{
               $update_rate = "UPDATE rate_price 
-                SET id_productname='$is_idname',product_name='$product_name',id_adder='$id_user',price_custommer_vip='$rate_vip', price_customer_frontstore='$rate_storefront', 
+                SET id_productname='$is_idname',product_name='$product_name',id_adder='$id_user',price_levels_one='$rate_vip', price_customer_frontstore='$rate_storefront', 
                 price_customer_deliver='$rate_delivery', price_customer_dealer='$rate_dealers',create_at='$day_add' WHERE rate_id=$rate_id";
               $query_update = mysqli_query($conn,$update_rate) or die(mysqli_error($conn));
               if($query_update){

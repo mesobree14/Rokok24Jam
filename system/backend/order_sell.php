@@ -52,6 +52,7 @@
       
       if($_SERVER['REQUEST_METHOD'] === "POST"){
                     
+          $is_idproductname = $_POST['is_idproductname'];
           $is_products = $_POST['product'];
           $is_costommerd = $_POST['costommerds'];
           $tatol_products = $_POST['tatol_product'];
@@ -105,16 +106,16 @@
             }
 
 
-            for($i=0; $i < count($is_products); $i++){
-              $is_product = mysqli_real_escape_string($conn,trim($is_products[$i]));
+            for($i=0; $i < count($is_idproductname); $i++){
+              $is_productId = mysqli_real_escape_string($conn,trim($is_idproductname[$i]));
               $formatis_costommerd = number_format((float)$is_costommerd[$i], 2, '.','');
               $is_costomer = mysqli_real_escape_string($conn, trim(number_format((float)$is_costommerd[$i], 2, '.','')));
               $tatol_product = mysqli_real_escape_string($conn, trim($tatol_products[$i]));
               $resutl_price = mysqli_real_escape_string($conn, trim(number_format((float)$resutl_prices[$i], 2, '.','')));
               $istype_custom = mysqli_real_escape_string($conn,trim($type_custom[$i]));
-              if($is_product !== "" || $is_costomer !== "" || $tatol_product !== "" || $resutl_price !== ""){
+              if($is_productId !== "" || $is_costomer !== "" || $tatol_product !== "" || $resutl_price !== ""){
                 $add_sqls = "INSERT INTO list_productsell (ordersell_id,productname,rate_customertype,type_custom,tatol_product,price_to_pay,create_at)
-                VALUES ('$id_order_sell','$is_product','$is_costomer','$istype_custom','$tatol_product','$resutl_price','$day_add')";
+                VALUES ('$id_order_sell','$is_productId','$is_costomer','$istype_custom','$tatol_product','$resutl_price','$day_add')";
                 $query_addsql = mysqli_query($conn,$add_sqls) or die(mysqli_error($conn));
                 if($query_addsql){
                   $chkstatus[] = "success";

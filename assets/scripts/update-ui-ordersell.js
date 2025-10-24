@@ -175,8 +175,8 @@ class formOrDerSellUpdate extends HTMLElement {
     const price_customer_frontstores = this.querySelector(
       `#price_customer_frontstore-${this.numbers}`
     );
-    const price_custommer_vips = this.querySelector(
-      `#price_custommer_vip-${this.numbers}`
+    const price_levels_ones = this.querySelector(
+      `#price_levels_one-${this.numbers}`
     );
     const price_customer_dealers = this.querySelector(
       `#price_customer_dealer-${this.numbers}`
@@ -218,12 +218,12 @@ class formOrDerSellUpdate extends HTMLElement {
       res_price.innerHTML = "";
       price_result.innerHTML = "";
     }
-    if (filtered[0].price_custommer_vip) {
-      vip_price.innerHTML = `ชิ้นละ ${filtered[0].price_custommer_vip} บาท`;
-      price_custommer_vips.classList.remove("disabledLi");
+    if (filtered[0].price_levels_one) {
+      vip_price.innerHTML = `ชิ้นละ ${filtered[0].price_levels_one} บาท`;
+      price_levels_ones.classList.remove("disabledLi");
     } else {
       vip_price.innerHTML = "";
-      price_custommer_vips.classList.add("disabledLi");
+      price_levels_ones.classList.add("disabledLi");
       selectSpan.innerText = "เลือก เรทราคา";
       res_price.innerHTML = "";
       price_result.innerHTML = "";
@@ -469,14 +469,14 @@ class formOrDerSellUpdate extends HTMLElement {
     const product_data = this.data ?? [];
     const customtypes = (data_custom) => {
       switch (data_custom) {
-        case "price_custommer_vip":
-          return "ราคา วีไอพี่";
+        case "price_levels_one":
+          return "ราคา ระดับ 1";
         case "price_customer_frontstore":
-          return "ราคาหน้าร้าน";
+          return "ราคา ระดับ 2";
         case "price_customer_deliver":
-          return "ราคา จัดส่ง";
+          return "ราคา ระดับ 4";
         case "price_customer_dealer":
-          return "ราคา ตัวแทนจำหน่าย";
+          return "ราคา ระดับ 3";
         default:
           return data_custom;
       }
@@ -529,8 +529,11 @@ class formOrDerSellUpdate extends HTMLElement {
               <div class="col-xl-3 col-lg-7">
                 <div class="form-group mb-2">
                   <label class="mt-0 mb-0 font-weight-bold text-dark col-12">รายการสินค้าที่ 
-                  <span data-role="index">${Number(this.numbers) + 1}</span>
+                    <span data-role="index">${Number(this.numbers) + 1}</span>
                   </label>
+                    <input type="hidden" name="id_productnames[]" id="id_productnames-${
+                      this.numbers
+                    }"/>
                     <div class="customInputContainer customInputContainer-${
                       this.numbers
                     }">
@@ -539,7 +542,7 @@ class formOrDerSellUpdate extends HTMLElement {
     } customInput searchInput">
                           <input class="selectedData form-control selectedData-${
                             this.numbers
-                          }"  type="text" name="product[]" id="name_procts-${
+                          }"  type="text" id="name_procts-${
       this.numbers
     }" name="product_name[]" required/>
                       </div>
@@ -564,26 +567,27 @@ class formOrDerSellUpdate extends HTMLElement {
                           this.numbers
                         }" style="display:none;"/>
                         <ul class="dropdown-menu-${this.numbers} dropdown-menu">
-                          <li id="price_customer_frontstore-${
+                          <li id="price_levels_one-${
                             this.numbers
                           }" class="row mx-0">
-                              ราคาหน้าร้าน
-                              <small id="frontstore_price-${
-                                this.numbers
-                              }" class="ml-auto"></small>
-                          </li>
-                          <li id="price_custommer_vip-${
-                            this.numbers
-                          }" class="row mx-0">
-                             ราคา วีไอพี่
+                             ราคา ระดับ 1
                            <small id="vip_price-${
                              this.numbers
                            }" class="ml-auto"></small>
                           </li>
+                          <li id="price_customer_frontstore-${
+                            this.numbers
+                          }" class="row mx-0">
+                              ราคา ระดับ 2
+                              <small id="frontstore_price-${
+                                this.numbers
+                              }" class="ml-auto"></small>
+                          </li>
+                          
                           <li id="price_customer_dealer-${
                             this.numbers
                           }" class="row mx-0">
-                              ราคา ตัวแทนจำหน่าย
+                              ราคา ระดับ 3
                               <small id="dealer_price-${
                                 this.numbers
                               }" class="ml-auto"></small>
@@ -591,7 +595,7 @@ class formOrDerSellUpdate extends HTMLElement {
                           <li id="price_customer_deliver-${
                             this.numbers
                           }" class="row mx-0">
-                             ราคา จัดส่ง
+                             ราคา ระดับ 4
                             <small id="deliver_price-${
                               this.numbers
                             }" class="ml-auto"></small>

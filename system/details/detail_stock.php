@@ -59,10 +59,10 @@ if(!isset($_SESSION['users_data'])){
                     <thead>
                        <tr>
                           <th class="font-weight-bold">ลำดับ</th>
-                          <th class="font-weight-bold">ราคา หน้าร้าน</th>
-                          <th class="font-weight-bold">ราคา วีไอพี่</th>
-                          <th class="font-weight-bold">ราคา ตัวแทนจำหน่าย</th>
-                          <th class="font-weight-bold">ราคา จัดส่ง</th>
+                          <th class="font-weight-bold">ราคา ระดับที่ 1</th>
+                          <th class="font-weight-bold">ราคา ระดับที่ 2</th>
+                          <th class="font-weight-bold">ราคา ระดับที่ 3</th>
+                          <th class="font-weight-bold">ราคา ระดับที่ 4</th>
                           <th class="font-weight-bold">จัดการ</th>
                        </tr>
                     </thead>
@@ -74,7 +74,7 @@ if(!isset($_SESSION['users_data'])){
                           $rate_acc_fetch = mysqli_fetch_assoc($query);
                           if($rate_acc_fetch){
                             listRatePrice(
-                              $rate_acc_fetch['rate_id'],$rate_acc_fetch['price_customer_frontstore'],$rate_acc_fetch['price_custommer_vip'],
+                              $rate_acc_fetch['rate_id'],$rate_acc_fetch['price_customer_frontstore'],$rate_acc_fetch['price_levels_one'],
                               $rate_acc_fetch['price_customer_dealer'],$rate_acc_fetch['price_customer_deliver'],$acc_name['product_name'],
                               $acc_name['price'],$acc_name['id_name'],$acc_name['price_center'],$acc_name['count_cord'],$acc_name['shipping_cost']
                             );
@@ -108,14 +108,16 @@ if(!isset($_SESSION['users_data'])){
                               <th>ราคาต้นทุนต่อลัง</th>
                               <th>ราคากลางต่อลัง</th>
                               <th>จำนวน</th>
-                              <th>ราคารวม</th>
+                              <th>ราคารวมลัง</th>
+                              <th>ค่าส่ง</th>
+                              <th>ราคาทั้งหมด</th>
                               <th>เวลา</th>
                           </tr>
                       </thead>
                       <tbody>
                           <?php
                               $get_sql = "SELECT stock_product.product_id,stock_product.product_count,stock_product.product_price,stock_product.count_cord,stock_product.price_center,
-                              order_box.order_name,order_box.date_time_order,name_product.id_name,name_product.product_name AS is_product_name FROM stock_product 
+                              stock_product.shipping_cost,stock_product.expenses,order_box.order_name,order_box.date_time_order,name_product.id_name,name_product.product_name AS is_product_name FROM stock_product 
                               LEFT JOIN name_product ON stock_product.product_name = name_product.id_name 
                               LEFT JOIN order_box ON order_box.order_id = stock_product.id_order 
                               WHERE stock_product.product_name='$id_productname' ORDER BY stock_product.create_at DESC";
@@ -123,7 +125,7 @@ if(!isset($_SESSION['users_data'])){
                                 foreach($get_datastock as $key => $res){
                                     tableDetailStock(
                                         ($key+1), $res['product_id'], $res['id_name'],$res['is_product_name'],$res['product_count'],$res['product_price'],$res['count_cord'],$res['price_center'],
-                                        $res['order_name'],$res['date_time_order']
+                                        $res['order_name'],$res['date_time_order'],$res['shipping_cost'],$res['expenses']
                                       );
                                 }
                           ?>

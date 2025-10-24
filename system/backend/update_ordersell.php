@@ -51,48 +51,19 @@
       }
       
       if($_SERVER['REQUEST_METHOD'] === "POST"){
-          //echo "ordersell_id";
+
           $ordersell_id = $_POST['ordersell_id'];
-          //echo $ordersell_id;
-          //echo "<br/> default_img:";
           $default_img = $_POST['default_img'];
-          //echo $default_img;
-          //echo "<br/> ordersell_name:";
           $ordersell_name = $_POST['ordersell_name'];
-          //echo $ordersell_name;
-
-          //echo "<br/> is_totalprice:";
           $is_totalprice = $_POST['is_totalprice'];
-          //echo $is_totalprice;
-
-          //echo "<br/> custome_name:";
           $custome_name = $_POST['custome_name'];
-          //echo $custome_name;
-
-          //echo "<br/> tell_custome:";
           $tell_custome = $_POST['tell_custome'];
-          //echo $tell_custome;
-
-         // echo "<br/> date_time_sell:";
           $date_time_sell = $_POST['date_time_sell'];
-          //echo $date_time_sell;
-
-          //echo "<br/> sender:";
           $sender = $_POST['sender'] ?? "";
-         // echo $sender;
-
-          //echo "<br/> tell_sender:";
           $tell_sender = $_POST['tell_sender'];
-          //echo $tell_sender;
-
-          //echo "<br/> location_send:";
           $location_send = $_POST['location_send'];
-          //echo $location_send;
-
-          //echo "<br/> shipping_note:";
           $shipping_note = $_POST['shipping_note'] ?? "";
-          //echo $shipping_note;
-          //echo "<br/> wages:";
+
           $wages = $_POST['wages'] ?? null;
           if(empty($wages)){
             $wages = 0;
@@ -100,32 +71,18 @@
             $wages = preg_replace('/[^\d.]/','',$wages);
             $wages = (float)$wages;
           }
-          //echo $wages;
-          //echo "<br/><hr/><br/>";
-          //echo "<br/> payment_options:";
 
           $payment_options = $_POST['payment_option'];
-          //print_r($payment_options);
-
-          //echo "<br/><hr/><br/>";
-          //echo "<br/> reason:";
           $reason = $_POST['reason'] ?? "";
-          //echo $reason;
-          //echo "<br/> count_totalpays:";
           $count_totalpays = $_POST['count_totalpays'] ?? 0;
           if($count_totalpays === '' || $count_totalpays === null){
             $count_totalpays = 0;
           }
-          //echo $count_totalpays;
-
-          //echo "<br/> count_stuck:";
           $count_stuck = $_POST['count_stuck'] ?? 0;
-          //echo $count_stuck;
         $coun_update = 0;
         $count_delete = 0;
         $count_insert = 0;
         $all_success = true;
-        //echo "<br/><hr/><br/>";
 
          if(isset($_FILES['eSell_slip'])&& $_FILES['eSell_slip']['error'] == 0 ){
           $update_ordersell = "UPDATE orders_sell SET ordersell_name='$ordersell_name', is_totalprice='$is_totalprice',custome_name='$custome_name',tell_custome='$tell_custome',
@@ -148,18 +105,10 @@
               while($route = mysqli_fetch_assoc($sql_typepay)){
                 $dbTypepay[] = $route['list_typepay'];
               }
-              //echo "<br/><hr/><br/>";
-              //echo "<br/> dbTypepay:";
-              //print_r($dbTypepay);
-              //echo "<br/> toIsert:";
+  
 
               $toIsert = array_diff($payment_options,$dbTypepay);
               $toDelete = array_diff($dbTypepay, $payment_options);
-              //print_r($toIsert);
-              //echo "<br/> toDelete:";
-              //print_r($toDelete);
-              //echo "<br/>";
-              
 
 
               if(!empty($toDelete)){
@@ -189,50 +138,22 @@
               while($row = mysqli_fetch_assoc($sql_productsell)){
                 $old_product[] = $row['list_sellid'];
               }
-              //echo "<br/><hr/><br/>";
-              //echo "<br/> old_product:";
-              //print_r($old_product);
-              
-              //echo "<br/>product_id:";
               $product_id = isset($_POST['product_id']) ? $_POST['product_id'] : [];
-              //print_r($product_id);
-              //echo "<br/> is_products:";
 
-              $is_products = $_POST['product'];
-              //print_r($is_products);
-              //echo "<br/> is_costommerd:";
+              $is_productnameID = $_POST['id_productnames'];
+              $is_products = $_POST['product_name'];
               $is_costommerd = $_POST['costommerds'];
-              //print_r($is_costommerd);
-              //echo "<br/> tatol_products:";
               $tatol_products = $_POST['tatol_product'];
-              //print_r($tatol_products);
-              //echo "<br/> resutl_prices:";
               $resutl_prices = $_POST['resutl_price'];
-              //print_r($resutl_prices);
-              //echo "<br/> type_custom";
               $type_custom = $_POST['type_custom'];
-              //print_r($type_custom);
-
-              //echo "<br/><hr/><br/>";
 
               foreach($is_products as $key => $resdata){
-                //echo "<br/> pid:";
                 $pid = !empty($product_id[$key]) ? $product_id[$key] : null;
-                //echo $pid;
-                //echo "<br/> res_productname:";
                 
                 $res_productname = $is_products[$key];
-                //echo $res_productname;
-                //echo "<br/> res_costommered:";
                 $res_costommered = mysqli_real_escape_string($conn, trim(number_format((float)$is_costommerd[$key], 2, '.','')));
-                //echo $res_costommered;
-                //echo "<br/> res_total:";
                 $res_total = mysqli_real_escape_string($conn, trim($tatol_products[$key]));
-                //echo $res_total;
-                //echo "<br/> res_prices:";
                 $res_prices = mysqli_real_escape_string($conn, trim(number_format((float)$resutl_prices[$key], 2, '.','')));
-                //echo $res_prices;
-                //echo "<br/> res_custom:";
                 $res_custom = mysqli_real_escape_string($conn,trim($type_custom[$key]));
                 ///echo $res_custom;
                 //echo "<br/>";

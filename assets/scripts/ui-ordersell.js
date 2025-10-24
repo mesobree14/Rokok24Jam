@@ -171,8 +171,8 @@ class formOrDerSell extends HTMLElement {
     const price_customer_frontstores = this.querySelector(
       `#price_customer_frontstore-${this.numbers}`
     );
-    const price_custommer_vips = this.querySelector(
-      `#price_custommer_vip-${this.numbers}`
+    const price_levels_ones = this.querySelector(
+      `#price_levels_one-${this.numbers}`
     );
     const price_customer_dealers = this.querySelector(
       `#price_customer_dealer-${this.numbers}`
@@ -197,13 +197,15 @@ class formOrDerSell extends HTMLElement {
     const selectSpan = dropdown.querySelector(`.select-${this.numbers} span`);
     let input_result = this.querySelector(`#resutl_${this.numbers}`);
     distotal.disabled = true;
+    console.log({ isPro: productname });
     if (!productname) {
       console.log("not data");
       return;
     }
     const filtered = this.stockdata.filter((item) =>
-      item.product_name.includes(productname)
+      item.is_productname.includes(productname)
     );
+    console.log({ filtered });
 
     if (filtered[0].price_customer_frontstore) {
       frontstore_price.innerHTML = `ชิ้นละ ${filtered[0].price_customer_frontstore} บาท`;
@@ -215,12 +217,12 @@ class formOrDerSell extends HTMLElement {
       res_price.innerHTML = "";
       price_result.innerHTML = "";
     }
-    if (filtered[0].price_custommer_vip) {
-      vip_price.innerHTML = `ชิ้นละ ${filtered[0].price_custommer_vip} บาท`;
-      price_custommer_vips.classList.remove("disabledLi");
+    if (filtered[0].price_levels_one) {
+      vip_price.innerHTML = `ชิ้นละ ${filtered[0].price_levels_one} บาท`;
+      price_levels_ones.classList.remove("disabledLi");
     } else {
       vip_price.innerHTML = "";
-      price_custommer_vips.classList.add("disabledLi");
+      price_levels_ones.classList.add("disabledLi");
       selectSpan.innerText = "เลือก เรทราคา";
       res_price.innerHTML = "";
       price_result.innerHTML = "";
@@ -271,26 +273,32 @@ class formOrDerSell extends HTMLElement {
     }
   }
 
-  updateData(data) {
+  updateData(productname, idProductName) {
+    let selectIdProductName = document.querySelector(
+      `.selectIdProductName-${this.numbers}`
+    );
     let selectedData = document.querySelector(`.selectedData-${this.numbers}`);
     let customInputContainer = document.querySelector(
       `.customInputContainer-${this.numbers}`
     );
     const ul = document.querySelector("ul");
     const dropdown = this.querySelector(`.dropdown-${this.numbers}`);
-    if (data) {
+    if (productname) {
       dropdown.classList.remove("disableds");
-      this.isSelectPrice(data, this.type_price);
+      this.isSelectPrice(productname, this.type_price);
     } else {
       dropdown.classList.add("disableds");
     }
 
-    selectedData.value = data ?? "";
+    selectedData.value = productname ?? "";
+    selectIdProductName.value = idProductName ?? "";
 
     for (const li of document.querySelectorAll("li.selected")) {
       li.classList.remove("selected");
     }
-    const clickedLi = [...ul.children].find((li) => li.innerText === data);
+    const clickedLi = [...ul.children].find(
+      (li) => li.innerText === productname
+    );
     if (clickedLi) clickedLi.classList.add("selected");
     customInputContainer.classList.toggle("show");
   }
@@ -298,6 +306,9 @@ class formOrDerSell extends HTMLElement {
   loadOption() {
     const tatolproducts = this.querySelector(`#tatolproduct-${this.numbers}`);
     let customInput = document.querySelector(`.customInput-${this.numbers}`);
+    let selectIdProductName = document.querySelector(
+      `.selectIdProductName-${this.numbers}`
+    );
     let selectedData = document.querySelector(`.selectedData-${this.numbers}`);
     let searchInput = document.querySelector(
       `.searchInput-${this.numbers} input`
@@ -336,6 +347,8 @@ class formOrDerSell extends HTMLElement {
       row.classList.add("row");
       let span = document.createElement("span");
       let small = document.createElement("small");
+      let pre = document.createElement("p");
+      pre.style.display = "none";
       if (products.remaining_product <= 0) {
         li.classList.add("disabled");
         li.style.pointerEvents = "none";
@@ -343,24 +356,28 @@ class formOrDerSell extends HTMLElement {
         li.style.opacity = "0.6";
       }
 
-      span.textContent = products.product_name;
+      pre.textContent = products.product_name; //id
+      span.textContent = products.is_productname;
       if (products.remaining_product == 0) {
         small.textContent = "สินค้าหมด";
       } else if (products.remaining_product < 0) {
         small.textContent = `สินค้าติดลบ ${products.remaining_product}`;
       } else {
-        small.textContent = `เหลืออีก ${products.remaining_product} ชิ้น`;
+        small.textContent = `เหลืออีก ${products.remaining_product} ลัง`;
       }
       small.classList.add("ml-auto");
       row.appendChild(span);
       row.appendChild(small);
+      row.appendChild(pre);
       li.appendChild(row);
       ul.appendChild(li);
     }
 
     ul.querySelectorAll("li").forEach((li) => {
       li.addEventListener("click", (e) => {
+        let pre = li.querySelector("p").innerText;
         let spanTxt = li.querySelector("span").innerText;
+        selectIdProductName.value = pre;
         selectedData.value = spanTxt;
 
         for (const li of document.querySelectorAll("li.selected")) {
@@ -372,8 +389,9 @@ class formOrDerSell extends HTMLElement {
     });
     searchInput.addEventListener("keyup", (e) => {
       let searchedVal = searchInput.value.toLowerCase();
+      console.log({ searchedVal });
       let searched_product = this.stockdata.filter((data) =>
-        data.product_name.toLowerCase().includes(searchedVal)
+        data.is_productname.toLowerCase().includes(searchedVal)
       );
 
       ul.innerHTML = "";
@@ -386,12 +404,29 @@ class formOrDerSell extends HTMLElement {
       }
       searched_product.forEach((product) => {
         const li = document.createElement("li");
-        li.textContent = product.product_name;
-        this.input_prodcutname = product.product_name;
+        li.classList.add("row");
+        let spanName = document.createElement("span");
+        const idInLi = document.createElement("p");
+        let small2 = document.createElement("small");
+        idInLi.textContent = product.product_name;
+        spanName.classList = "id-names-product";
+        idInLi.className = "hidden-id";
+        idInLi.style.display = "none";
+        idInLi.textContent = product.product_name;
+        spanName.textContent = product.is_productname;
+        //li.textContent = product.product_name;
+        this.input_prodcutname = product.is_productname;
+        small2.textContent = `เหลืออีก ${product.remaining_product} ลัง`;
+        small2.classList.add("ml-auto");
+        li.appendChild(spanName);
+        li.appendChild(idInLi);
+        li.appendChild(small2);
 
         li.addEventListener("click", (e) => {
           this.input_prodcutname = e.target.textContent;
-          this.updateData(e.target.textContent);
+          let idName = li.querySelector(".hidden-id").textContent;
+          let productName = li.querySelector(".id-names-product").textContent;
+          this.updateData(productName, idName);
         });
         ul.appendChild(li);
       });
@@ -472,8 +507,13 @@ class formOrDerSell extends HTMLElement {
               <div class="col-xl-3 col-lg-7">
                 <div class="form-group mb-2">
                   <label class="mt-0 mb-0 font-weight-bold text-dark col-12">รายการสินค้าที่ 
-                  <span data-role="index">${Number(this.numbers) + 1}</span>
+                    <span data-role="index">${Number(this.numbers) + 1}</span>
                   </label>
+                    <input class="selectIdProductName-${
+                      this.numbers
+                    }" name="is_idproductname[]"  type="text" id="id_productname-${
+      this.numbers
+    }" required/>
                     <div class="customInputContainer customInputContainer-${
                       this.numbers
                     }">
@@ -507,26 +547,28 @@ class formOrDerSell extends HTMLElement {
                           this.numbers
                         }" style="display:none;"/>
                         <ul class="dropdown-menu-${this.numbers} dropdown-menu">
-                          <li id="price_customer_frontstore-${
+                          <li id="price_levels_one-${
                             this.numbers
                           }" class="row mx-0">
-                              ราคาหน้าร้าน
-                              <small id="frontstore_price-${
-                                this.numbers
-                              }" class="ml-auto"></small>
-                          </li>
-                          <li id="price_custommer_vip-${
-                            this.numbers
-                          }" class="row mx-0">
-                             ราคา วีไอพี่
+                             ราคา ระดับ 1
                            <small id="vip_price-${
                              this.numbers
                            }" class="ml-auto"></small>
                           </li>
+
+                          <li id="price_customer_frontstore-${
+                            this.numbers
+                          }" class="row mx-0">
+                              ราคา ระดับ 2
+                              <small id="frontstore_price-${
+                                this.numbers
+                              }" class="ml-auto"></small>
+                          </li>
+                          
                           <li id="price_customer_dealer-${
                             this.numbers
                           }" class="row mx-0">
-                              ราคา ตัวแทนจำหน่าย
+                              ราคา ระดับ 3
                               <small id="dealer_price-${
                                 this.numbers
                               }" class="ml-auto"></small>
@@ -534,7 +576,7 @@ class formOrDerSell extends HTMLElement {
                           <li id="price_customer_deliver-${
                             this.numbers
                           }" class="row mx-0">
-                             ราคา จัดส่ง
+                             ราคา ระดับ 4
                             <small id="deliver_price-${
                               this.numbers
                             }" class="ml-auto"></small>
@@ -548,19 +590,19 @@ class formOrDerSell extends HTMLElement {
               </div>
               <div class="col-xl-2 col-lg-4">
                 <div class="form-group mb-2">
-                  <label class="m-0 font-weight-bold text-dark col-12">จำนวนขายกี่ชิ้น <span class="totalc-${
+                  <label class="m-0 font-weight-bold text-dark col-12">จำนวนขายกี่ลัง <span class="totalc-${
                     this.numbers
                   }"></span></label>
                   <div class="d-flex">
                     <input type="number" class="form-control mr-2 distotal" name="tatol_product[]" id="tatolproduct-${
                       this.numbers
-                    }" placeholder="กรอกจำนวนขาย" required>ชิ้น
+                    }" placeholder="กรอกจำนวนขาย" required>ลัง
                   </div>
                 </div>
               </div>
               <div class="col-xl-4 col-lg-8">
                   <div class="form-group mb-2">
-                    <label class="m-0 font-weight-bold text-dark col-12">จำนวนชิ้น x ราคาต่อชิ้น = ผลลัพธ์ </label>
+                    <label class="m-0 font-weight-bold text-dark col-12">จำนวนลัง x ราคาต่อลัง = ผลลัพธ์ </label>
                     <div class="form-control">
                       <span id="is_totals-${
                         this.numbers

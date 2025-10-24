@@ -65,7 +65,7 @@ function setTypeCustom($value){
     case "price_customer_dealer":
       return "ตัวแทนจำหน่าย";
       break;
-    case "price_custommer_vip";
+    case "price_levels_one";
       return "ลูกค้า vip";
       break;
     case "price_customer_frontstore":

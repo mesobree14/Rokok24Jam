@@ -274,7 +274,7 @@ function tablelistStock ($number, $id_product,$is_productname, $total_order, $to
   echo $listStock;
 }
 
-function tableDetailStock($number, $product_id,$id_nameproduct,$is_product_name,$productcount,$productprice, $count_cord,$price_center,$ordername, $datetime_order){
+function tableDetailStock($number, $product_id,$id_nameproduct,$is_product_name,$productcount,$productprice, $count_cord,$price_center,$ordername, $datetime_order,$shipping_cost,$expenses){
     $toal_all = $productprice * $productcount;
     $list_stock = "
         <form>
@@ -285,7 +285,9 @@ function tableDetailStock($number, $product_id,$id_nameproduct,$is_product_name,
               <td class=\"font-weight-bold\">$productprice บาท</td>
               <td class=\"font-weight-bold\">$price_center บาท</td>
               <td class=\"font-weight-bold\">$productcount ลัง ($count_cord คอต)</td>
-              <td class=\"font-weight-bold\">$toal_all</td> 
+              <td class=\"font-weight-bold\">$toal_all บาท</td> 
+              <td class=\"font-weight-bold\">$shipping_cost บาท</td> 
+              <td class=\"font-weight-bold\">$expenses บาท</td> 
               <td class=\"font-weight-bold\">$datetime_order</td> 
             </tr>
         </form>
@@ -296,7 +298,7 @@ function tableDetailStock($number, $product_id,$id_nameproduct,$is_product_name,
 function typecustomse($type){
     if($type === "price_customer_dealer"){
       return "ตัวแทนจำหน่าย";
-    }else if($type === "price_custommer_vip"){
+    }else if($type === "price_levels_one"){
       return "ลูกค้า vip";
     }else if($type === "price_customer_frontstore"){
       return "ลูกค้าหน้าร้าน";
@@ -374,7 +376,7 @@ function detailStock($productname,$total_count,$count_cord,$total_price,$product
     echo $detail;
 }
 
-function listRatePrice($rate_id="",$rate_storefront_price="",$rate_vip_price="",$rate_dealer_price="ยังไม่ได้กำหนด",$rate_delivery_price="",$product_name, $price_product,$id_name,$productpricecenter,$countcords,$shipping_cost){
+function listRatePrice($rate_id="",$rate_storefront_price="",$rate_onelevel_price="",$rate_dealer_price="ยังไม่ได้กำหนด",$rate_delivery_price="",$product_name, $price_product,$id_name,$productpricecenter,$countcords,$shipping_cost){
     function status($id){
         if($id){
             return "<i class=\"fas fa-pencil-alt text-warning\"></i>";
@@ -386,14 +388,14 @@ function listRatePrice($rate_id="",$rate_storefront_price="",$rate_vip_price="",
         <form>
             <tr>
                 <td class=\"font-weight-bold\">เรทราคา :</td>
+                <td class=\"font-weight-bold\">$rate_onelevel_price</td>
                 <td class=\"font-weight-bold\">$rate_storefront_price</td>
-                <td class=\"font-weight-bold\">$rate_vip_price</td>
                 <td class=\"font-weight-bold\">$rate_dealer_price</td>
                 <td class=\"font-weight-bold\">$rate_delivery_price</td>
                 <td>
                     <div class=\"table-data-feature\" >
                         <button type=\"button\" id=\"set_rate_price\" data-target=\"#modalFormUpdateRate\" data-toggle=\"modal\"  
-                           class=\"item\" data-id=\"$rate_id\" data-product=\"$product_name\" data-idname=\"$id_name\" data-storefront=\"$rate_storefront_price\" data-vip=\"$rate_vip_price\" 
+                           class=\"item\" data-id=\"$rate_id\" data-product=\"$product_name\" data-idname=\"$id_name\" data-storefront=\"$rate_storefront_price\" data-vip=\"$rate_onelevel_price\" 
                            data-dealers=\"$rate_dealer_price\" data-delivery=\"$rate_delivery_price\" data-productprice=\"$price_product\" data-productpricecenter=\"$productpricecenter\"
                            data-countcord=\"$countcords\" data-shippingcost=\"$shipping_cost\"
                         >
@@ -666,7 +668,7 @@ function listDetailOrderBuy($order_id, $order_name, $total_cost, $data_time_buy,
   echo $list;
 }
 
-function listProductBuy($number,$product_id, $product_name, $cost_price,$price_center, $total_product,$count_cord, $prices){
+function listProductBuy($number,$product_id, $product_name, $cost_price,$price_center, $total_product,$count_cord, $prices,$shipping_cost){
   $list = "
     <tr>
       <td class=\"font-weight-bold \"> $number</td>
@@ -674,6 +676,8 @@ function listProductBuy($number,$product_id, $product_name, $cost_price,$price_c
       <td class=\"font-weight-bold \"> $cost_price บาท</td>
       <td class=\"font-weight-bold \"> $price_center บาท</td>
       <td class=\"font-weight-bold \"> $total_product ลัง($count_cord คอต)</td>
+      <td class=\"font-weight-bold \">". $prices - $shipping_cost." บาท</td>
+      <td class=\"font-weight-bold \"> $shipping_cost บาท</td>
       <td class=\"font-weight-bold \"> $prices บาท</td>
     </tr>
   ";

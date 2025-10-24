@@ -146,25 +146,25 @@ class modelCreateRatePrice extends HTMLElement {
                   <div class="col-md-12 row mb-3">
                     <div class="col-md-6">
                       <div class="form-group mb-2">
-                        <label class="mt-0 mb-0 font-weight-bold text-dark">ราคา หน้าร้าน</label>
-                        <input type="text" class="form-control" name="rate_storefront" id="rate_price_storefront" placeholder="ชื่อสินค้า" required>
+                        <label class="mt-0 mb-0 font-weight-bold text-dark">ราคา ระดับที่ 1</label>
+                        <input type="text" class="form-control" name="rate_vip" id="rate_price_vip" placeholder="ชื่อสินค้า" required>
                       </div>  
                     </div>
                     <div class="col-md-6">
                         <div class="form-group mb-2">
-                          <label class="mt-0 mb-0 font-weight-bold text-dark">ราคา วีไอพี่</label>
-                          <input type="text" class="form-control" name="rate_vip" id="rate_price_vip" placeholder="ชื่อสินค้า" required>
+                          <label class="mt-0 mb-0 font-weight-bold text-dark">ราคา ระดับที่ 2</label>
+                          <input type="text" class="form-control" name="rate_storefront" id="rate_price_storefront" placeholder="ชื่อสินค้า" required>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-group mb-2">
-                          <label class="mt-0 mb-0 font-weight-bold text-dark">ราคา ตัวแทนจำหน่าย</label>
+                          <label class="mt-0 mb-0 font-weight-bold text-dark">ราคา ระดับที่ 3</label>
                           <input type="text" class="form-control" name="rate_dealers" id="rate_price_dealers" placeholder="ชื่อสินค้า" required>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-group mb-2">
-                          <label class="mt-0 mb-0 font-weight-bold text-dark">ราคา จัดส่ง</label>
+                          <label class="mt-0 mb-0 font-weight-bold text-dark">ราคา ระดับที่ 4</label>
                           <input type="text" class="form-control" name="rate_delivery" id="rate_price_delivery" placeholder="ชื่อสินค้า" required>
                         </div>
                     </div>

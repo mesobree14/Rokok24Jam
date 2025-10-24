@@ -621,9 +621,10 @@ const uiFormUpdate = `
         <div class=row col-12">
         <button type="button" class="remove-btn ml-auto my-2">❌ ลบ</button>
         </div>
+        <input type="hidden" name="product_id[]" value="" />
         <div class="form-group mb-2">
           <label class="mt-0 mb-0 font-weight-bold text-dark labelCount"></label>
-          <input class="selectId form-control c_product_id"  type="hidden" name="product_id[]" required/>
+          <input class="selectId form-control c_product_id"  type="hidden" name="is_idproduct[]" required/>
           <div class="customInputContainer">
               <div class="customInput searchInput">
                   <input class="selectedData form-control u_product_name"  type="text" name="product_name[]" required/>
@@ -937,6 +938,7 @@ class modelUpdateOrder extends HTMLElement {
         )}) + ค่าส่ง(${Number(shippings_cost.value).toFixed(2)})`;
         updateGrandTotal(this.financedata);
       });
+      console.log("gH=", shippings_cost.value);
 
       price_product.addEventListener("input", (e) => {
         let value = e.target.value;
