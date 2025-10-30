@@ -55,6 +55,12 @@ function navigationOfiicer($path = ""){
                           </a>
                         </li>
                         <li>
+                          <a href=\"{$path}peplegroup.php\">
+                            <i class=\"fa-solid fa-users-rectangle\"></i>
+                              <span>ข้อมูลสมาชิก</span>
+                          </a>
+                        </li>
+                        <li>
                           <a href=\"{$path}customer.php\">
                             <i class=\"fa-solid fa-people-group\"></i>
                               <span>ข้อมูลลูกค้า</span>
@@ -770,6 +776,33 @@ function listhistoryPayDebt($number,$id_paydebt,$serial_number,$customer_name,$t
               </button>
            </div>
         </td>
+    </tr>
+  ";
+  echo $list;
+}
+
+function listPepleGroup($number,$idgroup, $namegroup,$phonegroup,$status,$countsell, $price_allsell, $profitprice){
+  $list = "
+    <tr>
+      <td class=\"font-weight-bold\">$namegroup</td>
+      <td class=\"font-weight-bold\">$countsell</td>
+      <td class=\"font-weight-bold\">$price_allsell</td>
+      <td class=\"font-weight-bold\">$profitprice</td>
+      <td class='text-center'>
+        <div class=\"table-data-feature\" >
+            <a class=\"item\" data-toggle=\"tootip\" data-placement=\"top\" title=\"pdf\" target=\"_blank\" href=\"../details/PDF/PDF_historydebt.php?id_paydebt=$idgroup \">
+              <i class=\"fa-solid fa-file-pdf\"></i>
+            </a>
+            <button type=\"button\" id=\"update_peplegroup\" data-target=\"#modalFormPepleGroup\" data-toggle=\"modal\"  
+               class=\"item\" data-id=\"$idgroup\" data-name=\"$namegroup\" data-phone=\"$phonegroup\" data-status=\"$status\"
+            >
+                <i class=\"fas fa-pencil-alt text-warning\"></i>
+            </button>
+            <button type=\"button\" class=\"item\" id=\"confirmTrashPepleGroup\" data-id=\"$idgroup\" >
+              <i class=\"fas fa-trash-alt text-danger\"></i>
+            </button>
+         </div>
+      </td>
     </tr>
   ";
   echo $list;

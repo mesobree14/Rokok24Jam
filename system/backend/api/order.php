@@ -15,7 +15,7 @@
             SP.count_cord AS res_count_cord,SP.shipping_cost AS res_shipping_cost,SP.expenses,SP.id_order,NP.id_name,NP.product_name,NP.price,
             NP.price_center,NP.count_cord,NP.shipping_cost
             FROM stock_product SP LEFT JOIN name_product NP ON NP.id_name = SP.product_name 
-            WHERE SP.id_order='$order_id'")or die(mysqli_error($conn));
+            WHERE SP.id_order='$order_id'") or die(mysqli_error($conn));
           $num_row = mysqli_num_rows($query);
           
           if($num_row > 0){

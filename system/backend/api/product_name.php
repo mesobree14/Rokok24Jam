@@ -12,7 +12,7 @@
      date_default_timezone_set("Asia/Bangkok");
      if($_SERVER['REQUEST_METHOD'] == "GET"){
         $sql_get = "SELECT name_product.id_name,name_product.product_name,name_product.price,name_product.price_center,name_product.count_cord,name_product.shipping_cost, SUM(stock_product.count_cord) as countcord_product
-          FROM name_product LEFT JOIN stock_product ON name_product.id_name = stock_product.product_name 
+          FROM name_product LEFT JOIN stock_product ON name_product.id_name = stock_product.product_name WHERE name_product.status_del= 1
           GROUP BY name_product.id_name,name_product.product_name";
         $query = mysqli_query($conn,$sql_get);
         $num_rows = mysqli_num_rows($query);

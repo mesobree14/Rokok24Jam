@@ -57,23 +57,24 @@
           $ordersell_name = $_POST['ordersell_name'];
           $is_totalprice = $_POST['is_totalprice'];
           $custome_name = $_POST['custome_name'];
-          $tell_custome = $_POST['tell_custome'];
+          $sell_idpeplegroup = $_POST['peplegroup_id'];
+          //$tell_custome = $_POST['tell_custome'];
           $date_time_sell = $_POST['date_time_sell'];
-          $sender = $_POST['sender'] ?? "";
-          $tell_sender = $_POST['tell_sender'];
-          $location_send = $_POST['location_send'];
-          $shipping_note = $_POST['shipping_note'] ?? "";
+          //$sender = $_POST['sender'] ?? "";
+         // $tell_sender = $_POST['tell_sender'];
+          //$location_send = $_POST['location_send'];
+          //$shipping_note = $_POST['shipping_note'] ?? "";
 
-          $wages = $_POST['wages'] ?? null;
-          if(empty($wages)){
-            $wages = 0;
-          }else{
-            $wages = preg_replace('/[^\d.]/','',$wages);
-            $wages = (float)$wages;
-          }
+          // $wages = $_POST['wages'] ?? null;
+          // if(empty($wages)){
+          //   $wages = 0;
+          // }else{
+          //   $wages = preg_replace('/[^\d.]/','',$wages);
+          //   $wages = (float)$wages;
+          // }
 
           $payment_options = $_POST['payment_option'];
-          $reason = $_POST['reason'] ?? "";
+          //$reason = $_POST['reason'] ?? "";
           $count_totalpays = $_POST['count_totalpays'] ?? 0;
           if($count_totalpays === '' || $count_totalpays === null){
             $count_totalpays = 0;
@@ -85,15 +86,15 @@
         $all_success = true;
 
          if(isset($_FILES['eSell_slip'])&& $_FILES['eSell_slip']['error'] == 0 ){
-          $update_ordersell = "UPDATE orders_sell SET ordersell_name='$ordersell_name', is_totalprice='$is_totalprice',custome_name='$custome_name',tell_custome='$tell_custome',
-            date_time_sell='$date_time_sell',shipping_note='$shipping_note',sender='$sender',tell_sender='$tell_sender',location_send='$location_send',wages='$wages',
-            reason='$reason',slip_ordersell='".setImgpath("eSell_slip")."',count_totalpays='$count_totalpays',count_stuck='$count_stuck',adder_id='$id_user',create_at='$day_add' 
+          $update_ordersell = "UPDATE orders_sell SET ordersell_name='$ordersell_name', is_totalprice='$is_totalprice',custome_name='$custome_name',
+            date_time_sell='$date_time_sell',sell_idpeplegroup='$sell_idpeplegroup',
+            slip_ordersell='".setImgpath("eSell_slip")."',count_totalpays='$count_totalpays',count_stuck='$count_stuck',adder_id='$id_user',create_at='$day_add' 
             WHERE id_ordersell='$ordersell_id'
           ";
          }else{
-          $update_ordersell = "UPDATE orders_sell SET ordersell_name='$ordersell_name', is_totalprice='$is_totalprice',custome_name='$custome_name',tell_custome='$tell_custome',
-            date_time_sell='$date_time_sell',shipping_note='$shipping_note',sender='$sender',tell_sender='$tell_sender',location_send='$location_send',wages='$wages',
-            reason='$reason',slip_ordersell='$default_img',count_totalpays='$count_totalpays',count_stuck='$count_stuck',adder_id='$id_user',create_at='$day_add' 
+          $update_ordersell = "UPDATE orders_sell SET ordersell_name='$ordersell_name', is_totalprice='$is_totalprice',custome_name='$custome_name',
+            date_time_sell='$date_time_sell',sell_idpeplegroup='$sell_idpeplegroup',
+            slip_ordersell='$default_img',count_totalpays='$count_totalpays',count_stuck='$count_stuck',adder_id='$id_user',create_at='$day_add' 
             WHERE id_ordersell='$ordersell_id'
           ";
          }
@@ -150,7 +151,7 @@
               foreach($is_products as $key => $resdata){
                 $pid = !empty($product_id[$key]) ? $product_id[$key] : null;
                 
-                $res_productname = $is_products[$key];
+                $res_idproductname = $is_productnameID[$key];
                 $res_costommered = mysqli_real_escape_string($conn, trim(number_format((float)$is_costommerd[$key], 2, '.','')));
                 $res_total = mysqli_real_escape_string($conn, trim($tatol_products[$key]));
                 $res_prices = mysqli_real_escape_string($conn, trim(number_format((float)$resutl_prices[$key], 2, '.','')));
@@ -160,7 +161,7 @@
                 if($pid){
                  // echo "have id:";
                  // echo $pid;
-                  $sql_edit = "UPDATE list_productsell SET productname='$res_productname',rate_customertype='$res_costommered',type_custom='$res_custom',tatol_product='$res_total',price_to_pay='$res_prices' WHERE list_sellid='$pid' AND ordersell_id='$ordersell_id'";
+                  $sql_edit = "UPDATE list_productsell SET productname='$res_idproductname',rate_customertype='$res_costommered',type_custom='$res_custom',tatol_product='$res_total',price_to_pay='$res_prices' WHERE list_sellid='$pid' AND ordersell_id='$ordersell_id'";
                   $query_editproduct = mysqli_query($conn,$sql_edit) or die(mysqli_error($conn));
                   if($query_editproduct){
                     $coun_update++;

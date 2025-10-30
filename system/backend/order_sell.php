@@ -61,25 +61,27 @@
 
           $ordersell_name = $_POST['ordersell_name'];
           $is_totalprice = $_POST['is_totalprice'];
+          //$tell_custome = $_POST['tell_custome'];
           $custome_name = $_POST['custome_name'];
-          $tell_custome = $_POST['tell_custome'];
           $date_time_sell = $_POST['date_time_sell'];
-          
-          $sender = $_POST['sender'] ?? "";
-          $tell_sender = $_POST['tell_sender'];
-          $location_send = $_POST['location_send'];
-
-          $shipping_note = $_POST['shipping_note'] ?? "";
-          $wages = $_POST['wages'] ?? null;
-          if(empty($wages)){
-            $wages = 0;
-          }else{
-            $wages = preg_replace('/[^\d.]/','',$wages);
-            $wages = (float)$wages;
-          }
-
+          $peplegroup_id = $_POST['peplegroup_id'];
           $payment_options = $_POST['payment_option'];
-          $reason = $_POST['reason'] ?? "";
+          
+          //$sender = $_POST['sender'] ?? "";
+          //$tell_sender = $_POST['tell_sender'];
+          //$location_send = $_POST['location_send'];
+
+          //$shipping_note = $_POST['shipping_note'] ?? "";
+          //$wages = $_POST['wages'] ?? null;
+          //if(empty($wages)){
+          //  $wages = 0;
+          //}else{
+          //  $wages = preg_replace('/[^\d.]/','',$wages);
+          //  $wages = (float)$wages;
+          //}
+
+          
+          //$reason = $_POST['reason'] ?? "";
 
           $count_totalpays = $_POST['count_totalpays'] ?? 0;
           if($count_totalpays === '' || $count_totalpays === null){
@@ -89,8 +91,8 @@
 
           $chkstatus = [];
  
-          $sql_add = "INSERT INTO orders_sell (ordersell_name,is_totalprice,custome_name,tell_custome,date_time_sell,shipping_note,sender,tell_sender,location_send,wages,reason,slip_ordersell,count_totalpays,count_stuck,adder_id,create_at)
-           VALUES ('$ordersell_name','$is_totalprice','$custome_name','$tell_custome','$date_time_sell','$shipping_note','$sender','$tell_sender','$location_send','$wages','$reason','".setImgpath("sell_slip")."','$count_totalpays','$count_stuck','$id_user','$day_add')";
+          $sql_add = "INSERT INTO orders_sell (ordersell_name,is_totalprice,custome_name,date_time_sell,sell_idpeplegroup,slip_ordersell,count_totalpays,count_stuck,adder_id,create_at)
+           VALUES ('$ordersell_name','$is_totalprice','$custome_name','$date_time_sell','$peplegroup_id','".setImgpath("sell_slip")."','$count_totalpays','$count_stuck','$id_user','$day_add')";
           $query_add = mysqli_query($conn, $sql_add) or die(mysqli_error($conn));
           if($query_add){
             $id_order_sell = mysqli_insert_id($conn);

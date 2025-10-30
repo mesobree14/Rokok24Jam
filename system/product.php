@@ -45,7 +45,7 @@ if(!isset($_SESSION['users_data'])){
             </button>
           </div>
           <div class="col-md-12 mt-4"> 
-            <div class="col-xl-10 col-md-12">
+            <div class="col-xl-11 col-md-12">
               <div class="table-responsive table-responsive-data2 mt-2">
                   <table class="table table-data2 mydataTablePatron">
                       <thead>

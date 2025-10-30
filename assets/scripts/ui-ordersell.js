@@ -197,7 +197,6 @@ class formOrDerSell extends HTMLElement {
     const selectSpan = dropdown.querySelector(`.select-${this.numbers} span`);
     let input_result = this.querySelector(`#resutl_${this.numbers}`);
     distotal.disabled = true;
-    console.log({ isPro: productname });
     if (!productname) {
       console.log("not data");
       return;
@@ -205,7 +204,6 @@ class formOrDerSell extends HTMLElement {
     const filtered = this.stockdata.filter((item) =>
       item.is_productname.includes(productname)
     );
-    console.log({ filtered });
 
     if (filtered[0].price_customer_frontstore) {
       frontstore_price.innerHTML = `ชิ้นละ ${filtered[0].price_customer_frontstore} บาท`;
@@ -389,7 +387,6 @@ class formOrDerSell extends HTMLElement {
     });
     searchInput.addEventListener("keyup", (e) => {
       let searchedVal = searchInput.value.toLowerCase();
-      console.log({ searchedVal });
       let searched_product = this.stockdata.filter((data) =>
         data.is_productname.toLowerCase().includes(searchedVal)
       );
@@ -511,7 +508,7 @@ class formOrDerSell extends HTMLElement {
                   </label>
                     <input class="selectIdProductName-${
                       this.numbers
-                    }" name="is_idproductname[]"  type="text" id="id_productname-${
+                    }" name="is_idproductname[]"  type="hidden" id="id_productname-${
       this.numbers
     }" required/>
                     <div class="customInputContainer customInputContainer-${
@@ -758,18 +755,21 @@ class modelSetOrderSell extends HTMLElement {
                                   </div>
                               </div>
                             </div>
-                            <main-get-select></main-get-select>
+                            
                             <div class="row">
-                              <div class="col-xl-8 col-md-12 pl-3">
-                                <div class="form-group mb-2 shipping-state">
-                                  <label class="mt-0 mb-0 font-weight-bold text-dark">หมายเหตุการจัดส่ง</label>
-                                  <div class="row">
-                                      <input type="text" class="ml-3 mr-1 py-2 form-control col-md-6 col-sm-12" name="sender" id="sender" placeholder="ผู้ส่ง">
-                                      <input type="text" class=" form-control py-2 col-md-5 col-sm-12" name="tell_sender" id="tell_sender" placeholder="เบอร์โทรผู้ส่ง">
-                                  </div>
+                              <div class="col-xl-8 col-md-7 col-sm-12">
+                                <main-get-group></main-get-group>
+                              </div>
+                              <div class="col-xl-4 col-md-5 col-sm-12">
+                                <div class="form-group mb-2">
+                                  <label class="mt-0 mb-0 font-weight-bold text-dark">วันที่และเวลา <span class="text-danger">*</span></label>
+                                  <input type="datetime-local" class="form-control" name="date_time_sell" id="date_time_sell" placeholder="วันที่และเวลา" required>
                                 </div> 
                               </div>
-                              <div class="col-xl-4 pl-0 col-md-12">
+                              <div class="col-xl-8 col-md-7 col-sm-12">
+                                <main-get-select></main-get-select>
+                              </div>
+                              <div class="col-xl-4 col-md-5 col-sm-12">
                                 <label class="mt-0 mb-0 col-12 font-weight-bold text-dark">ตัวเลือกการจ่าย <span class="text-danger">*</span></label>
                                 <select class="form-control multiple-select" name="payment_option[]" id="payment_options" placeholder="ตัวเลือกการจ่าย" multiple="multiple" required>
                                     <option value="โอน">โอน</option>
@@ -777,12 +777,6 @@ class modelSetOrderSell extends HTMLElement {
                                     <option value="ติดค้าง">ติดค้าง</option>
                                 </select>
                               </div>
-                              
-                              <div class="col-12">                         
-                                  <label for="exampleFormControlTextarea1">เหตุผล(ถ้ามี)</label>
-                                  <textarea class="form-control" id="exampleFormControlTextarea1" name="reason" rows="2"></textarea>
-                              </div>
-                              
                             </div>
                           
                         </div>
@@ -814,18 +808,196 @@ class modelSetOrderSell extends HTMLElement {
 
 customElements.define("mian-form-ordersell", modelSetOrderSell);
 
-class SelectCustome extends HTMLElement {
+class SelectPepleGroup extends HTMLElement {
   constructor() {
     super();
   }
+  peplegroup = [];
   customdata = [];
   async connectedCallback() {
-    await this.loadData();
-    this.render();
-    this.scriptCodeCustome();
+    await this.loadDataPepleGroup();
+    this.renderHTML();
+    this.scriptPeplegroup();
   }
 
-  async loadData() {
+  async loadDataPepleGroup() {
+    try {
+      const responses = await fetch(
+        "http://localhost/Rokok24Jam/system/backend/api/peplegroup_api.php",
+        {
+          method: "GET",
+          credentials: "include",
+        }
+      );
+      const responsedata = await responses.json();
+      this.peplegroup.push(responsedata.data);
+      return responsedata;
+    } catch (e) {
+      console.error(`Is Error ${e}`);
+    }
+  }
+
+  scriptPeplegroup() {
+    const index = 1;
+    let isForm = document.querySelector(".is-formPepleGroup");
+    let isSelect = isForm.querySelector(".getSelectPepleGroup");
+    let pepleGroupInputContainer = isSelect.querySelector(
+      ".customInputContainer"
+    );
+    let customInput = isSelect.querySelector(".customInput");
+    let selectedData = isSelect.querySelector(".selectedData");
+    let selectedIdData = isSelect.querySelector(".selectedIdData");
+    let serchInput = isSelect.querySelector(".searchInput input");
+    let ul = isSelect.querySelector(`.options ul`);
+
+    customInput.classList.add(`IsPepleGroupInput-${index}`);
+    isSelect.classList.add(`IsPepleGroupInputContainer-${index}`);
+    selectedData.classList.add(`IsGoupselectedData-${index}`);
+    selectedIdData.classList.add(`IsGroupSelectId-${index}`);
+    serchInput.classList.add(`IsGroupserchInput-${index}`);
+    ul.classList.add(`IsGroupoptions-${index}`);
+
+    window.addEventListener("click", (e) => {
+      const searchInputEl = isSelect.querySelector(`.IssearchInput-${index}`);
+      if (searchInputEl && searchInputEl.contains(e.target)) {
+        searchInputEl.classList.add("focus");
+      } else if (searchInputEl) {
+        searchInputEl.classList.remove("focus");
+      }
+      if (
+        pepleGroupInputContainer &&
+        !pepleGroupInputContainer.contains(e.target)
+      ) {
+        pepleGroupInputContainer.classList.remove("show");
+      }
+    });
+    customInput.addEventListener("click", () => {
+      pepleGroupInputContainer.classList.add("show");
+    });
+    for (let i = 0; i < this.peplegroup[0].length; i++) {
+      let peplegroup = this.peplegroup[0][i];
+      let li = document.createElement("li");
+      li.classList.add("block");
+      const row = document.createElement("div");
+      row.classList.add("row");
+      let pre = document.createElement("p");
+      let span = document.createElement("span");
+      pre.style.display = "none";
+      pre.textContent = peplegroup.id_peplegroup;
+      span.textContent = peplegroup.name_peplegroup;
+      row.appendChild(span);
+      row.appendChild(pre);
+      li.appendChild(row);
+      ul.appendChild(li);
+    }
+    ul.querySelectorAll("li").forEach((li) => {
+      li.addEventListener("click", () => {
+        let spanTxt = li.querySelector("span").innerText;
+        let spanId = li.querySelector("p").innerText;
+        selectedData.value = spanTxt;
+        selectedIdData.value = spanId;
+        for (const li of document.querySelectorAll("li.selected")) {
+          li.classList.remove("selected");
+        }
+        li.classList.add("selected");
+        pepleGroupInputContainer.classList.toggle("show");
+      });
+    });
+    serchInput.addEventListener("keyup", () => {
+      let searchedVal = serchInput.value.toLowerCase();
+      let searched_product = this.peplegroup[0].filter((data) =>
+        data.name_peplegroup.toLowerCase().includes(searchedVal)
+      );
+      ul.innerHTML = "";
+      if (searched_product.length === 0) {
+        ul.innerHTML = `<p style='margin-top: 1rem;'>
+                          ไม่มีข้อมูล
+                        </p>`;
+        return;
+      }
+      searched_product.forEach((data) => {
+        const li = document.createElement("li");
+        li.classList.add("row");
+        let span_name = document.createElement("span");
+        let pre_id = document.createElement("p");
+        span_name.classList = "peplegroupname";
+        pre_id.classList = "id_peplegroup";
+        //li.textContent = data.custome_name;
+        pre_id.style.display = "none";
+        span_name.textContent = data.name_peplegroup;
+        pre_id.textContent = data.id_peplegroup;
+        li.appendChild(span_name);
+        li.appendChild(pre_id);
+        li.addEventListener("click", (e) => {
+          let IsPepleGoup = li.querySelector(".peplegroupname").textContent;
+          let IsIdPepleGroup = li.querySelector(".id_peplegroup").textContent;
+          this.updateDataPepleGroup(
+            IsIdPepleGroup,
+            IsPepleGoup,
+            index,
+            isSelect
+          );
+        });
+        ul.appendChild(li);
+      });
+    });
+  }
+
+  updateDataPepleGroup(id_peplegroup, data_peplegroup, index, group) {
+    let selectGroupData = group.querySelector(`.IsGoupselectedData-${index}`);
+    let selectGroupId = group.querySelector(`.IsGroupSelectId-${index}`);
+
+    let groupInputContainer = document.querySelector(
+      `.IsPepleGroupInputContainer-${index}`
+    );
+    const ul = group.querySelector("ul");
+    selectGroupId.value = id_peplegroup ?? "";
+    selectGroupData.value = data_peplegroup ?? "";
+    for (const lis of group.querySelectorAll("li.selected")) {
+      lis.classList.remove("selected");
+    }
+    const clickedLi = [...ul.children].find((li) => {
+      return li.innerText === data_peplegroup;
+    });
+    if (clickedLi) clickedLi.classList.add("selected");
+    groupInputContainer.classList.toggle("show");
+  }
+  renderHTML() {
+    this.innerHTML = `
+      
+      <div class="col-md-12 is-formPepleGroup">
+        <div class="getSelectPepleGroup form-group mb-2">
+          <label class="mt-0 mb-0 font-weight-bold text-dark">ชื่อผู้ขาย <span class="text-danger">*</span></label>
+          <input class="selectedIdData" type="hidden" name="peplegroup_id" id="peplegroutid"/>
+          <div class="customInputContainer">
+              <div class="customInput searchInput">
+                  <input class="selectedData form-control peplegroup_name"  type="text" name="peplegroups_name" required/>
+              </div>
+              <div class="options">
+                  <ul></ul>
+              </div>
+          </div>
+        </div> 
+      </div>     
+    `;
+  }
+}
+
+customElements.define("main-get-group", SelectPepleGroup);
+
+class SelectCustomers extends HTMLElement {
+  constructor() {
+    super();
+  }
+  peplegroup = [];
+  customdata = [];
+  async connectedCallback() {
+    await this.loadDataCustomer();
+    this.renderHTML();
+    this.scriptCustomer();
+  }
+
+  async loadDataCustomer() {
     try {
       const response = await fetch(
         "http://localhost/Rokok24Jam/system/backend/api/customer_api.php",
@@ -841,43 +1013,25 @@ class SelectCustome extends HTMLElement {
       console.error(`Is Error ${e}`);
     }
   }
-  updateData(data_custome, index, group) {
-    this.scriptTell(data_custome);
-    this.scriptLocation(data_custome);
-    let selectedData = group.querySelector(`.IsselectedData-${index}`);
-    let customInputContainer = document.querySelector(
-      `.IscustomInputContainer-${index}`
-    );
-    const ul = group.querySelector("ul");
-    selectedData.value = data_custome ?? "";
-    for (const li of group.querySelectorAll("li.selected")) {
-      li.classList.remove("selected");
-    }
-    const clickedLi = [...ul.children].find(
-      (li) => li.innerText === data_custome
-    );
-    if (clickedLi) clickedLi.classList.add("selected");
-    customInputContainer.classList.toggle("show");
-  }
-  scriptCodeCustome() {
-    const index = 1;
-    let isForm = document.querySelector(".is-form");
-    let getSelect = isForm.querySelector(".getSelect");
-    let customInputContainer = getSelect.querySelector(".customInputContainer");
-    let customInput = getSelect.querySelector(`.customInput`);
 
-    let selectedData = getSelect.querySelector(".selectedData");
-    let serchInput = getSelect.querySelector(".searchInput input");
-    let ul = getSelect.querySelector(`.options ul`);
+  scriptCustomer() {
+    const index = 1;
+    let isForm = document.querySelector(".is-formCustom");
+    let isSelect = isForm.querySelector(".getSelectCustomer");
+    let customInputContainer = isSelect.querySelector(".customInputContainer");
+    let customInput = isSelect.querySelector(".customInput");
+    let selectedData = isSelect.querySelector(".selectedData");
+    let serchInput = isSelect.querySelector(".searchInput input");
+    let ul = isSelect.querySelector(`.options ul`);
 
     customInput.classList.add(`IscustomInput-${index}`);
-    getSelect.classList.add(`IscustomInputContainer-${index}`);
-    selectedData.classList.add(`IsselectedData-${index}`);
-    serchInput.classList.add(`IsserchInput-${index}`);
-    ul.classList.add(`Isoptions-${index}`);
+    isSelect.classList.add(`IscustomInputContainer-${index}`);
+    selectedData.classList.add(`IsCustomselectedData-${index}`);
+    serchInput.classList.add(`IsCustomserchInput-${index}`);
+    ul.classList.add(`IsCustomoptions-${index}`);
 
     window.addEventListener("click", (e) => {
-      const searchInputEl = getSelect.querySelector(`.IssearchInput-${index}`);
+      const searchInputEl = isSelect.querySelector(`.IssearchInput-${index}`);
       if (searchInputEl && searchInputEl.contains(e.target)) {
         searchInputEl.classList.add("focus");
       } else if (searchInputEl) {
@@ -905,9 +1059,6 @@ class SelectCustome extends HTMLElement {
     ul.querySelectorAll("li").forEach((li) => {
       li.addEventListener("click", () => {
         let spanTxt = li.querySelector("span").innerText;
-        console.log("FG=", spanTxt);
-        this.scriptTell(spanTxt);
-        this.scriptLocation(spanTxt);
         selectedData.value = spanTxt;
         for (const li of document.querySelectorAll("li.selected")) {
           li.classList.remove("selected");
@@ -921,311 +1072,72 @@ class SelectCustome extends HTMLElement {
       let searched_product = this.customdata[0].filter((data) =>
         data.custome_name.toLowerCase().includes(searchedVal)
       );
-      console.log({ searched_product });
       ul.innerHTML = "";
       if (searched_product.length === 0) {
-        ul.innerHTML = "";
+        ul.innerHTML = `<p style='margin-top: 1rem;'>
+                          ไม่มีข้อมูล
+                        </p>`;
         return;
       }
       searched_product.forEach((data) => {
         const li = document.createElement("li");
-        li.textContent = data.custome_name;
+        li.classList.add("row");
+        let span_name = document.createElement("span");
+        span_name.classList = "customername";
+        //li.textContent = data.custome_name;
+        span_name.textContent = data.custome_name;
+        li.appendChild(span_name);
         li.addEventListener("click", (e) => {
-          this.updateData(e.target.textContent, index, getSelect);
+          let IsCustomerName = li.querySelector(".customername").textContent;
+          this.updateData(IsCustomerName, index, isSelect);
         });
         ul.appendChild(li);
       });
     });
   }
-
-  updateDataTell(data_tell, index, group) {
-    console.log({ data_tell });
-    let selectedData = group.querySelector(`.IsselectedTellData-${index}`);
+  updateData(data_custome, index, group) {
+    let selectedCustomData = group.querySelector(
+      `.IsCustomselectedData-${index}`
+    );
     let customInputContainer = document.querySelector(
-      `.IsTellInputContainer-${index}`
+      `.IscustomInputContainer-${index}`
     );
     const ul = group.querySelector("ul");
-    selectedData.value = data_tell ?? "";
-    for (const li of group.querySelectorAll("li.selected")) {
-      li.classList.remove("selected");
+    selectedCustomData.value = data_custome ?? "";
+    for (const lis of group.querySelectorAll("li.selected")) {
+      lis.classList.remove("selected");
     }
-    const clickedLi = [...ul.children].find((li) => li.innerText === data_tell);
+    const clickedLi = [...ul.children].find((li) => {
+      return li.innerText === data_custome;
+    });
     if (clickedLi) clickedLi.classList.add("selected");
     customInputContainer.classList.toggle("show");
   }
 
-  scriptTell(customename) {
-    if (customename) {
-      const index = 2;
-      const customes = this.customdata[0].filter((data) =>
-        data.custome_name.toLowerCase().includes(customename.toLowerCase())
-      );
-      const isTell = document.querySelector(".is-tell");
-      let getSelectTell = isTell.querySelector(".getSelectTell");
-      let customInputContainer = getSelectTell.querySelector(
-        ".customInputContainer"
-      );
-      let customInput = getSelectTell.querySelector(`.customInput`);
-
-      let selectedData = getSelectTell.querySelector(".selectedData");
-      let serchInput = getSelectTell.querySelector(".searchInput input");
-      let ul = getSelectTell.querySelector(`.options ul`);
-      customInput.classList.add(`IsTellInput-${index}`);
-      getSelectTell.classList.add(`IsTellInputContainer-${index}`);
-      selectedData.classList.add(`IsselectedTellData-${index}`);
-      serchInput.classList.add(`IsTellserchInput-${index}`);
-      ul.classList.add(`IsTelloptions-${index}`);
-
-      selectedData.value = "";
-
-      window.addEventListener("click", (e) => {
-        const searchInputEl = getSelectTell.querySelector(
-          `.IsTellserchInput-${index}`
-        );
-        if (searchInputEl && searchInputEl.contains(e.target)) {
-          searchInputEl.classList.add("focus");
-        } else if (searchInputEl) {
-          searchInputEl.classList.remove("focus");
-        }
-        if (customInputContainer && !customInputContainer.contains(e.target)) {
-          customInputContainer.classList.remove("show");
-        }
-      });
-      customInput.addEventListener("click", () => {
-        customInputContainer.classList.add("show");
-      });
-      ul.innerHTML = "";
-      if (customes.length > 0 && customes[0].customtell) {
-        for (let i = 0; i < customes[0].customtell.length; i++) {
-          let custom = customes[0].customtell;
-          let li = document.createElement("li");
-          li.classList.add("block");
-          const row = document.createElement("div");
-          row.classList.add("row");
-          let span = document.createElement("span");
-          span.textContent = custom[i];
-          row.appendChild(span);
-          li.appendChild(row);
-          ul.appendChild(li);
-        }
-      }
-      ul.querySelectorAll("li").forEach((li) => {
-        li.addEventListener("click", () => {
-          let spanTxt = li.querySelector("span").innerText;
-          selectedData.value = spanTxt;
-          for (const li of document.querySelectorAll("li.selected")) {
-            li.classList.remove("selected");
-          }
-          li.classList.add("selected");
-          customInputContainer.classList.toggle("show");
-        });
-      });
-
-      serchInput.addEventListener("keyup", () => {
-        let searchedVal = serchInput.value.toLowerCase();
-        if (customes.length > 0 && Array.isArray(customes[0].customtell)) {
-          let searched_product = customes[0].customtell.filter((data) =>
-            data.toLowerCase().includes(searchedVal)
-          );
-          ul.innerHTML = "";
-          if (searched_product.length === 0) {
-            ul.innerHTML = "";
-            return;
-          }
-          searched_product.forEach((data) => {
-            const li = document.createElement("li");
-            console.log({ data });
-            li.textContent = data;
-            li.addEventListener("click", (e) => {
-              this.updateDataTell(e.target.textContent, index, getSelectTell);
-            });
-            ul.appendChild(li);
-          });
-        }
-      });
-    }
-  }
-
-  updateDataLocation(data_location, index, group) {
-    console.log({ data_location });
-    let selectedLocationData = group.querySelector(
-      `.IsselectedLocationData-${index}`
-    );
-    let customInputContainer = document.querySelector(
-      `.IsLocationInputContainer-${index}`
-    );
-    const ul = group.querySelector("ul");
-    selectedLocationData.value = data_location ?? "";
-    for (const li of group.querySelectorAll("li.selected")) {
-      li.classList.remove("selected");
-    }
-    const clickedLi = [...ul.children].find(
-      (li) => li.innerText === data_location
-    );
-    if (clickedLi) clickedLi.classList.add("selected");
-    customInputContainer.classList.toggle("show");
-  }
-
-  scriptLocation(customername) {
-    if (customername) {
-      const index = 3;
-      const customes = this.customdata[0].filter((data) =>
-        data.custome_name.toLowerCase().includes(customername.toLowerCase())
-      );
-      const isLocation = document.querySelector(".is-loaction");
-      let getSelectLocation = isLocation.querySelector(".getSelectLocation");
-      let customInputContainer = getSelectLocation.querySelector(
-        ".customInputContainer"
-      );
-      let customInput = getSelectLocation.querySelector(`.customInput`);
-
-      let selectedData = getSelectLocation.querySelector(".selectedData");
-      let serchInput = getSelectLocation.querySelector(".searchInput input");
-      let ul = getSelectLocation.querySelector(`.options ul`);
-      customInput.classList.add(`IsLocationInput-${index}`);
-      getSelectLocation.classList.add(`IsLocationInputContainer-${index}`);
-      selectedData.classList.add(`IsselectedLocationData-${index}`);
-      serchInput.classList.add(`IsLocationserchInput-${index}`);
-      ul.classList.add(`IsLocationoptions-${index}`);
-
-      selectedData.value = "";
-
-      window.addEventListener("click", (e) => {
-        const searchInputEl = getSelectLocation.querySelector(
-          `.IsLocationserchInput-${index}`
-        );
-        if (searchInputEl && searchInputEl.contains(e.target)) {
-          searchInputEl.classList.add("focus");
-        } else if (searchInputEl) {
-          searchInputEl.classList.remove("focus");
-        }
-        if (customInputContainer && !customInputContainer.contains(e.target)) {
-          customInputContainer.classList.remove("show");
-        }
-      });
-      customInput.addEventListener("click", () => {
-        customInputContainer.classList.add("show");
-      });
-      ul.innerHTML = "";
-      if (customes.length > 0 && customes[0].customlocation) {
-        console.log("[", customes);
-        for (let i = 0; i < customes[0].customlocation.length; i++) {
-          let custom = customes[0].customlocation;
-          console.log("LO=", i);
-          console.log("LO=", custom);
-          let li = document.createElement("li");
-          li.classList.add("block");
-          const row = document.createElement("div");
-          row.classList.add("row");
-          let span = document.createElement("span");
-          span.textContent = custom[i];
-          row.appendChild(span);
-          li.appendChild(row);
-          ul.appendChild(li);
-        }
-      }
-      ul.querySelectorAll("li").forEach((li) => {
-        li.addEventListener("click", () => {
-          let spanTxt = li.querySelector("span").innerText;
-          selectedData.value = spanTxt;
-          for (const li of document.querySelectorAll("li.selected")) {
-            li.classList.remove("selected");
-          }
-          li.classList.add("selected");
-          customInputContainer.classList.toggle("show");
-        });
-      });
-
-      serchInput.addEventListener("keyup", () => {
-        let searchedVal = serchInput.value.toLowerCase();
-
-        if (customes.length > 0 && Array.isArray(customes[0].customlocation)) {
-          let searched_product = customes[0].customlocation.filter((data) =>
-            data.toLowerCase().includes(searchedVal)
-          );
-          ul.innerHTML = "";
-          if (searched_product.length === 0) {
-            ul.innerHTML = "";
-            return;
-          }
-          searched_product.forEach((data) => {
-            const li = document.createElement("li");
-            console.log({ data });
-            li.textContent = data;
-            li.addEventListener("click", (e) => {
-              this.updateDataLocation(
-                e.target.textContent,
-                index,
-                getSelectLocation
-              );
-            });
-            ul.appendChild(li);
-          });
-        }
-      });
-    }
-  }
-  render() {
+  renderHTML() {
     this.innerHTML = `
-    <div class="row col-12 p-0">
-      <div class="col-xl-5 col-md-7 is-form">
-        <div class="getSelect form-group mb-2">
-          <label class="mt-0 mb-0 font-weight-bold text-dark">ชื่อลูกค้า <span class="text-danger">*</span></label>
-          <div class="customInputContainer">
-              <div class="customInput searchInput">
-                  <input class="selectedData form-control cusotmer_name"  type="text" name="custome_name" required/>
-              </div>
-              <div class="options">
-                  <ul></ul>
-              </div>
-          </div>
-        </div> 
-      </div>
-
-      <div class="col-xl-4 col-md-5 is-tell">
-        <div class="getSelectTell form-group mb-2">
-          <label class="mt-0 mb-0 font-weight-bold text-dark">เบอร์โทร <span class="text-danger">*</span></label>
-          <div class="customInputContainer">
-              <div class="customInput searchInput">
-                  <input class="selectedData form-control cusotmer_tell"  type="text" name="tell_custome" required/>
-              </div>
-              <div class="options">
-                  <ul></ul>
-              </div>
-          </div>
-        </div> 
-      </div>
-
-      <div class="col-xl-3 col-md-5">
-        <div class="form-group mb-2">
-          <label class="mt-0 mb-0 font-weight-bold text-dark">วันที่และเวลา <span class="text-danger">*</span></label>
-          <input type="datetime-local" class="form-control" name="date_time_sell" id="date_time_sell" placeholder="วันที่และเวลา" required>
-        </div> 
-      </div>
-      <div class="col-12 is-loaction">
-        <div class="getSelectLocation form-group mb-2">
-            <label class="mt-0 mb-0 font-weight-bold text-dark">ที่อยู่ในการจัดส่ง</label>
+         
+        <div class="col-md-12 is-formCustom">
+          <div class="getSelectCustomer form-group mb-2">
+            <label class="mt-0 mb-0 font-weight-bold text-dark">ชื่อลูกค้า <span class="text-danger">*</span></label>
             <div class="customInputContainer">
-              <div class="customInput searchInput">
-                  <input class="selectedData form-control location_send"  type="text" name="location_send" placeholder="ที่อยู่ในการจัดส่ง"/>
-              </div>
-              <div class="options">
-                  <ul></ul>
-              </div>
-          </div>
+                <div class="customInput searchInput">
+                    <input class="selectedData form-control customers_name"  type="text" name="custome_name" required/>
+                </div>
+                <div class="options">
+                    <ul></ul>
+                </div>
+            </div>
+          </div> 
         </div>
-      </div>
-    </div>
     `;
   }
 }
-
-customElements.define("main-get-select", SelectCustome);
+customElements.define("main-get-select", SelectCustomers);
 
 $(document).on("click", "#confirmTrashOrderSell", function (e) {
   let idorder_sell = $(this).data("id");
   let order_sellname = $(this).data("ordersell");
-  console.log({ idorder_sell, order_sellname });
   Swal.fire({
     title: "คุณแน่ใจไหม ?",
     text: `รายการ ${order_sellname} นี้ พร้อมสินค้า จะถูกลบทั้งหมด จะไม่สามารถย้อนกลับได้`,
@@ -1247,7 +1159,6 @@ $(document).on("click", "#confirmTrashOrderSell", function (e) {
         );
         const responsedata = await responseapi.json();
         if (responsedata.status === 201) {
-          console.log(responsedata);
           Swal.fire({
             title: "เรียบร้อย",
             text: "ลบ order นี้เรียบร้อยแล้ว",

@@ -64,7 +64,8 @@ include_once("../../../backend/config.php");
       }
     }elseif($_SERVER['REQUEST_METHOD'] == "GET"){
       $id_ordersell = $_GET['ordersell_id'];
-      $query_product = mysqli_query($conn,"SELECT * FROM list_productsell WHERE ordersell_id=$id_ordersell");
+      $query_product = mysqli_query($conn,"SELECT * FROM list_productsell LP LEFT JOIN name_product NP ON LP.productname = NP.id_name WHERE LP.ordersell_id=$id_ordersell");
+      //$query_product = mysqli_query($conn,"SELECT * FROM list_productsell WHERE ordersell_id=$id_ordersell");
 
       $num_row = mysqli_num_rows($query_product);
       if($num_row > 0){

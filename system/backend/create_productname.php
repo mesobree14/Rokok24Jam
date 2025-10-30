@@ -43,11 +43,11 @@
           if(!$_POST['id_name']){
               echo "insert:";
               echo $_POST['id_name'];
-              $sql_select = mysqli_query($conn,"SELECT product_name FROM name_product WHERE product_name='$product_name'");
+              $sql_select = mysqli_query($conn,"SELECT product_name FROM name_product WHERE product_name='$product_name' AND status_del=1");
               $num = mysqli_num_rows($sql_select);
                 if($num == 0){
-                  $sql = "INSERT INTO name_product(product_name,price,price_center,count_cord,shipping_cost,adder_id,create_at)
-                  VALUES('$product_name','$price_default','$price_center','$count_cord','$shipping_cost','$id_user','$day_add')";
+                  $sql = "INSERT INTO name_product(product_name,price,price_center,count_cord,shipping_cost,adder_id,status_del,create_at)
+                  VALUES('$product_name','$price_default','$price_center','$count_cord','$shipping_cost','$id_user',1,'$day_add')";
                   $query = mysqli_query($conn,$sql) or die(mysqli_error($conn));
                   if($query){
                     echo "<script type=\"text/javascript\">
@@ -67,12 +67,12 @@
           }else{
             $id_name = $_POST['id_name'];
             $id_name = (int)$id_name;
-            $sql_editselect = mysqli_query($conn,"SELECT product_name,id_name FROM name_product WHERE product_name='$product_name' AND id_name != $id_name");
+            $sql_editselect = mysqli_query($conn,"SELECT product_name,id_name FROM name_product WHERE product_name='$product_name' AND id_name != $id_name AND status_del = 1");
             $num_edit = mysqli_num_rows($sql_editselect);
             if($num_edit == 0){
               $edit_ql = "UPDATE name_product 
                 SET product_name='$product_name', price='$price_default', price_center='$price_center',
-                count_cord=$count_cord, shipping_cost='$shipping_cost',adder_id=$id_user
+                count_cord=$count_cord, shipping_cost='$shipping_cost',adder_id=$id_user,status_del=1
                 WHERE id_name=$id_name
               ";
               $edit_query = mysqli_query($conn,$edit_ql) or die(mysqli_error($conn));

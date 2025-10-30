@@ -10,15 +10,15 @@
     header("Pragma: no-cache");
     date_default_timezone_set("Asia/Bangkok");
     if($_SERVER['REQUEST_METHOD'] === "GET"){
-      $sql = "SELECT custome_name,
-      GROUP_CONCAT(DISTINCT tell_custome ORDER BY tell_custome SEPARATOR ',') AS customtell,
-      GROUP_CONCAT(DISTINCT location_send ORDER BY location_send SEPARATOR ',') AS customlocation 
+      $sql = "SELECT custome_name
+      -- GROUP_CONCAT(DISTINCT tell_custome ORDER BY tell_custome SEPARATOR ',') AS customtell,
+      -- GROUP_CONCAT(DISTINCT location_send ORDER BY location_send SEPARATOR ',') AS customlocation 
       FROM orders_sell GROUP BY custome_name";
       $query_sql = mysqli_query($conn,$sql);
       $result_data = [];
       while($row = mysqli_fetch_assoc($query_sql)){
-        $row['customtell'] = explode(",", $row['customtell']);
-        $row['customlocation'] = [trim($row['customlocation'])]; //explode(",", $row['customlocation']);
+        // $row['customtell'] = explode(",", $row['customtell']);
+        // $row['customlocation'] = [trim($row['customlocation'])]; //explode(",", $row['customlocation']);
         $result_data[] = $row;
       }
 
