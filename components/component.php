@@ -497,7 +497,7 @@ function status_pays($totalprice,$custompay,$countstuck){
     return "<p class=\"text-danger font-weight-bold\">[ จ่ายแล้วแต่ยังติดค้าง ]</p>";
   }
 }
-function detailOrderSell($id_ordersell,$ordersell_name,$is_totalprice,$custome_name,$tell_custome,$location_send,$date_time_sell,$total,$totalproduct,$reasons,$sender,$tell_sender,$count_totalpays,$count_stuck,$slip_ordersell,$adder_id,$create_at,$sell_type,$count_pays){
+function detailOrderSell($id_ordersell,$ordersell_name,$is_totalprice,$custome_name,$tell_custome,$location_send,$name_peplegroup,$date_time_sell,$total,$totalproduct,$reasons,$sender,$tell_sender,$count_totalpays,$count_stuck,$slip_ordersell,$adder_id,$create_at,$sell_type,$count_pays){
   $list = "
     <div class=\"col-12 p-0 m-0\">
       <div class=\"col-12 row\">
@@ -532,18 +532,17 @@ function detailOrderSell($id_ordersell,$ordersell_name,$is_totalprice,$custome_n
       </div>
       <div class=\"row p-0 m-0\">
         <div class=\"col-sm-12 col-md-7 col-lg-9 p-0 m-0 row\">
+        <div class=\"col-lg-6 col-xl-4 row\">
+            ชื่อผู้ขาย: <p class=\"font-weight-bold text-primary\">[ $name_peplegroup ]</p>
+          </div>
           <div class=\"col-lg-6 col-xl-4 row\">
             ชื่อผู้ซื้อ: <p class=\"font-weight-bold text-primary\">[ $custome_name ]</p>
           </div>
-          <div class=\"col-lg-6 col-xl-4 row\">
-            เบอร์โทร: <p class=\"font-weight-bold p-0 m-0\">[ $tell_custome ]</p>
-          </div>
-          
           <div class=\"col-lg-6 col-xl-4 row p-0 m-0\">
             สถานะ: ".status_pays($is_totalprice,$count_totalpays,$count_stuck)."
           </div>
           <div class=\"col-lg-6 col-xl-4 row\">
-              จำนวนกล่องทั้งหมด <p class=\"font-weight-bold\">[ $totalproduct ] </p> ชิ้น
+              จำนวนสินค้าทั้งหมด <p class=\"font-weight-bold\">[ $totalproduct ] </p> ลัง
           </div>
           <div class=\"col-sm-6 col-lg-5 col-xl-4 row p-0 m-0\">
             จำนวนเงินที่จ่าย: <p class=\"font-weight-bold text-success\">[ $count_totalpays ] </p> บาท
@@ -551,26 +550,13 @@ function detailOrderSell($id_ordersell,$ordersell_name,$is_totalprice,$custome_n
           <div class=\"col-sm-6 col-lg-5 col-xl-4 row p-0 m-0\">
             จำนวนเงินที่ค้าง: <p class=\"font-weight-bold text-danger\">[ $count_stuck ] </p> บาท
           </div>
-          <div class=\"col-12 row m-0 p-0\">
-            
-              ที่อยู่ในการจัดส่ง: <p class=\"font-wight-bold text-info\">[ $location_send ] </p>
-
-          </div>
-          <div class=\"col-xl-3 row p-0 m-0\">
-            ผู้ส่ง: <p class=\"font-weight-bold\">[ $sender ] </p>
-          </div>
-          <div class=\"col-xl-4 row p-0 m-0\">
-            เบอร์โทรผู้ส่ง: <p class=\"font-weight-bold\">[ $tell_sender ] </p>
-          </div>
+         
           <div class=\"col-md-12 col-lg-6 col-xl-5 m-0 p-0 \">
             <table class=\"table table-data-pay\">
               <tbody>
                 ". set_type($sell_type) ."
               </tbody>
             </table>
-          </div>
-          <div class=\"col-12 row\">                         
-            หมายเหตุ: <div class=\"col-10 row p-0 m-0\">[ $reasons ]</div>
           </div>
         </div>
         <div class=\"col-sm-12 col-md-5 col-lg-3\">

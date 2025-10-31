@@ -185,7 +185,7 @@ $html = '
 </style>
   <div class="" style="">
     <div style="float: left; width: 55%; margin-left:5px">
-      <img src="../../../assets/img/Jbox-logo.jpg" width="40" height="40" />
+      
     </div>
     <div style="float: right; width: 40%;">
       <h3 style="text-align: right;">ใบเสร็จคำสั่งขาย</h3>
@@ -195,12 +195,10 @@ $html = '
     <div class="component">
         <div class="left">
           <div class="doc">
-              <b class="label" style="font-size:17px;">ผู้ขาย :</b>
-              <small class="value">JBok จำหน่ายกล่องพัศดุราคาโรงงาน</small>
+              <b class="label" style="font-size:17px;">ร้าน :</b>
+              <small class="value">Rokok24Jam</small>
           </div>
           <div class="doc">
-              <b class="label" style="font-size:17px;">เบอร์โทร :</b>
-              <small class="value">081-189-9578</small>
           </div>
         </div>
         <div class="right" style="background-color:#ffb3ff;">
@@ -291,7 +289,7 @@ $unique = array_unique($type_customer);
       <div class="right-custom">
         <div class="doc">
             <b class="label" style="font-size:17px;">เบอร์โทร :</b>
-            <small class="value">'.$order['tell_custome'].'</small>
+            <small class="value"></small>
         </div>
          <div class="doc">
             <b class="label" style="font-size:17px;">สถานะการจ่าย :</b>
@@ -305,29 +303,6 @@ $unique = array_unique($type_customer);
       </div>
     </div>
     <div class="component">
-      <div class="left-qr">
-        <img src="../../../db/tqr.png" />
-      </div>
-      <div class="right-qr">
-        <div class="doc" style="margin-top:11px;">
-            <b class="label" style="font-size:17px;">ที่อยู่ผู้ซื้อ :</b>
-            <small class="value">'.$order['location_send'].'</small>
-        </div>
-        <div class="component">
-          <div class="doc" style="float: left; width: 50%; box-sizing: border-box;">
-              <b class="label" style="font-size:17px;">ผู้ส่ง :</b>
-              <small class="value">'.$order['sender'].'</small>
-          </div>
-          <div class="doc" style="float: right; width: 40%; box-sizing: border-box;">
-              <b class="label" style="font-size:17px;">เบอร์โทร :</b>
-              <small class="value">'.$order['tell_sender'].'</small>
-          </div>
-        </div>
-        <div class="doc">
-            <b class="label" style="font-size:17px;">หมายเหตุ :</b>
-            <small class="value">'.$order['reason'].'</small>
-        </div>
-      </div>
     </div>
   </div>
 ';

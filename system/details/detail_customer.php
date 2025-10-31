@@ -42,15 +42,15 @@ if(!isset($_SESSION['users_data'])){
               $query_sqli = mysqli_query($conn,$sql) or die(mysqli_error($conn));
               $rows = mysqli_fetch_assoc($query_sqli);
 
-              $sql_tell = mysqli_query($conn,"SELECT tell_custome,location_send FROM orders_sell WHERE custome_name='$custom_name' ORDER BY create_at DESC LIMIT 1");
-              $rows_tell = mysqli_fetch_assoc($sql_tell);
+              //$sql_tell = mysqli_query($conn,"SELECT tell_custome,location_send FROM orders_sell WHERE custome_name='$custom_name' ORDER BY create_at DESC LIMIT 1");
+              //$rows_tell = mysqli_fetch_assoc($sql_tell);
 
               $sqli_debt = mysqli_query($conn,"SELECT COUNT(*) AS total_pay, SUM(count_debtpaid) AS count_dabtprice FROM custom_debtpaid WHERE name_customer='$custom_name'");
               $row_pay = mysqli_fetch_assoc($sqli_debt);
             ?>
             <div class="col-12 shadow-lg row">
               <div class="col-12 row">
-                <a href="PDF/PDF_ordersell.php?ordersell_id=$id_ordersell" target="_blank" class="ml-auto px-5 mt-4">
+                <a href="#" target="_blank" class="ml-auto px-5 mt-4">
                    <i class="fas fa-file-code\"></i>
                    Print PDF
                 </a>
@@ -62,12 +62,12 @@ if(!isset($_SESSION['users_data'])){
                             <div class="text-xs font-weight-bold text-uppercase">
                               ชือลูกค้า : [ <?php echo $rows['custome_name'] ?> ]
                             </div>
-                            <div class="text-xs font-weight-bold text-uppercase mt-3">
-                              เบอร์โทร(ล่าสุด) :  <?php echo $rows_tell['tell_custome'] ?>
+                            <!-- <div class="text-xs font-weight-bold text-uppercase mt-3">
+                              เบอร์โทร(ล่าสุด) :  <?php //echo $rows_tell['tell_custome'] ?>
                             </div>
                             <div class="text-xs font-weight-bold text-uppercase mt-3">
-                              ที่อยู่(ล่าสุด) :  <?php echo $rows_tell['location_send'] ?>
-                            </div>
+                              ที่อยู่(ล่าสุด) :  <?php //echo $rows_tell['location_send'] ?>
+                            </div> -->
                           </div>
                         </div>
                       </div>

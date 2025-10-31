@@ -46,12 +46,12 @@ if(!isset($_SESSION['users_data'])){
             </button>
           </div>
         <div class="col-12 row mt-2">
-          <div class="col-md-12 border-right">
+          <div class="col-lg-12 col-xl-11 border-right">
             <div class="table-responsive table-responsive-data2 mt-2">
                 <table class="table table-data2">
                     <thead>
                         <tr>
-                            <th style="width:20%">ชื่อสมาชิก</th>
+                            <th style="width:30%">ชื่อสมาชิก</th>
                             <th style="width:12%">จำนวนครั้งที่ขาย</th>
                             <th style="width:15%">รายได้ทั้งหมดที่ขาย</th>
                             <th style="width:15%">กำไรที่ขายได้</th>
@@ -60,6 +60,24 @@ if(!isset($_SESSION['users_data'])){
                     </thead>
                     <tbody>
                       <?php
+                        // $get_peplegroup = "SELECT 
+                        //   PG.id_peplegroup,PG.name_peplegroup,PG.phone_group,PG.status_group,
+                        //   COALESCE(OS_SUM.itemcount, 0)AS item_count,
+                        //   COALESCE(OS_SUM.totalprice, 0)AS total_prices
+                        //   FROM peple_groups PG 
+                        //   LEFT JOIN (
+                        //     SELECT sell_idpeplegroup,COUNT(DISTINCT id_ordersell) AS itemcount,SUM(is_totalprice) AS totalprice FROM orders_sell GROUP BY sell_idpeplegroup
+                        //   ) OS_SUM ON OS_SUM.sell_idpeplegroup = PG.id_peplegroup
+                        //   LEFT JOIN (
+                        //     SELECT OS_SUM.sell_idpeplegroup, SUM(tatol_product) AS total_product
+                        //     FROM (
+                        //     SELECT ordersell_id, COUNT(*) AS productcount,sell_idpeplegroup FROM list_productsell
+                        //     )
+                        //   )";
+                        // $query_peplegroup = mysqli_query($conn,$get_peplegroup);
+                        // foreach($query_peplegroup as $key => $res){
+                        //   listPepleGroup($key+1,$res['id_peplegroup'],$res['name_peplegroup'],$res['phone_group'],$res['status_group'],$res['item_count'],$res['total_prices'],0);
+                        // }
                         $get_peplegroup = "SELECT id_peplegroup,name_peplegroup,phone_group,status_group FROM peple_groups";
                         $query_peplegroup = mysqli_query($conn,$get_peplegroup);
                         foreach($query_peplegroup as $key => $res){

@@ -16,7 +16,11 @@ if(!isset($_SESSION['users_data'])){
       ";
 }
 
-$sql = "SELECT * FROM orders_sell LEFT JOIN sell_typepay ON orders_sell.id_ordersell = sell_typepay.ordersell_id WHERE id_ordersell='$ordersell_id'";
+$sql = "SELECT OS.id_ordersell,OS.ordersell_name,OS.is_totalprice,OS.custome_name,OS.date_time_sell,OS.sell_idpeplegroup,
+  OS.slip_ordersell,OS.count_totalpays,OS.count_stuck,OS.adder_id,OS.create_at,ST.typepay_id,ST.ordersell_id,ST.list_typepay,PG.name_peplegroup
+  FROM orders_sell OS LEFT JOIN sell_typepay ST ON OS.id_ordersell = ST.ordersell_id 
+  LEFT JOIN peple_groups PG ON OS.sell_idpeplegroup = PG.id_peplegroup
+  WHERE id_ordersell='$ordersell_id'";
 $sql_query = mysqli_query($conn,$sql) or die(mysqli_error($conn));
 
 $count_query = mysqli_query($conn, "SELECT COUNT(*) AS total, SUM(tatol_product) AS total_product FROM list_productsell WHERE ordersell_id='$ordersell_id'");
@@ -44,14 +48,15 @@ foreach($res_acc as $rows){
       'count_totalpays' => $rows['count_totalpays'],
       'count_stuck' => $rows['count_stuck'],
       'custome_name' => $rows['custome_name'],
-      'tell_custome' => $rows['tell_custome'],
-      'location_send' => $rows['location_send'],
+      //'tell_custome' => $rows['tell_custome'],
+      //'location_send' => $rows['location_send'],
       'date_time_sell' => $rows['date_time_sell'],
-      'shipping_note' => $rows['shipping_note'],
-      'sender' => $rows['sender'],
-      'tell_sender' => $rows['tell_sender'],
-      'wages' => $rows['wages'],
-      'reason' => $rows['reason'],
+      'name_peplegroup' => $rows['name_peplegroup'],
+      //'shipping_note' => $rows['shipping_note'],
+      //'sender' => $rows['sender'],
+     // 'tell_sender' => $rows['tell_sender'],
+     // 'wages' => $rows['wages'],
+      //'reason' => $rows['reason'],
       'slip_ordersell' => $rows['slip_ordersell'],
       'adder_id' => $rows['adder_id'],
       'create_at' => $rows['create_at'],
@@ -107,8 +112,8 @@ foreach($res_acc as $rows){
             
               <?php 
                 detailOrderSell(
-                  $order['id_ordersell'],$order['ordersell_name'],$order['is_totalprice'],$order['custome_name'],$order['tell_custome'],$order['location_send'],
-                  $order['date_time_sell'],$count_row['total'],$count_row['total_product'],$order['reason'],$order['sender'],$order['tell_sender'],($order['count_totalpays'] + $row_ispays['sum_amount_paid']),
+                  $order['id_ordersell'],$order['ordersell_name'],$order['is_totalprice'],$order['custome_name'],'tell_custome','location_send',$order['name_peplegroup'],
+                  $order['date_time_sell'],$count_row['total'],$count_row['total_product'],'reason','sender','tell_sender',($order['count_totalpays'] + $row_ispays['sum_amount_paid']),
                   ($order['count_stuck'] - $row_ispays['sum_amount_paid']),$order['slip_ordersell'],$order['adder_id'],$order['create_at'],$sell_type,$row_ispays['count_pays']
                 );
                 
