@@ -90,8 +90,8 @@
                     $is_expenses = mysqli_real_escape_string($conn, trim($expenses[$i]));
                     $is_shipping_cost = mysqli_real_escape_string($conn, trim($shipping_cost[$i]));
                     if($is_product_name !== "" || $is_count_product !== "" || $is_price_product !== ""){
-                      $insertQl = "INSERT INTO stock_product (product_name,product_count,product_price,price_center,count_cord,shipping_cost,expenses,id_adder,id_order,create_at) 
-                          VALUES ('$is_product_id','$is_count_product','$is_price_product',$is_price_center,'$is_count_cord','$is_shipping_cost','$is_expenses','$id_user','$id_order','$day_add')
+                      $insertQl = "INSERT INTO stock_product (product_name,product_count,product_price,price_center,count_cord,shipping_cost,expenses,id_adder,id_order,lot_number,create_at) 
+                          VALUES ('$is_product_id','$is_count_product','$is_price_product',$is_price_center,'$is_count_cord','$is_shipping_cost','$is_expenses','$id_user','$id_order','$lot_number','$day_add')
                       ";
                       $queryQl = mysqli_query($conn, $insertQl) or die(mysqli_error($conn));
                       if($queryQl){
@@ -164,7 +164,7 @@
                 $p_shipping_cost = $shipping_cost[$key];
 
                 if($pid){
-                  $sql_edit = "UPDATE stock_product SET product_name='$is_id_product', product_count='$pcount', product_price='$pprice',price_center='$p_price_center',count_cord='$p_count_cord',shipping_cost='$p_shipping_cost', expenses='$p_exp' ,id_adder='$id_user' WHERE product_id=$pid AND id_order=$order_id";
+                  $sql_edit = "UPDATE stock_product SET product_name='$is_id_product', product_count='$pcount', product_price='$pprice',price_center='$p_price_center',count_cord='$p_count_cord',shipping_cost='$p_shipping_cost', expenses='$p_exp' ,id_adder='$id_user',lot_number='$lot_number' WHERE product_id=$pid AND id_order=$order_id";
                   $query_edit = mysqli_query($conn,$sql_edit) or die(mysqli_error($conn));
                   if($query_edit){
                     $coun_update++;
@@ -175,8 +175,8 @@
                   }
                 }else{
 
-                  $sql_insert = "INSERT INTO stock_product(product_name,product_count,product_price,price_center,count_cord,shipping_cost,expenses,id_adder,id_order,create_at)
-                  VALUES ('$is_id_product','$pcount','$pprice','$p_price_center','$p_count_cord','$p_shipping_cost','$p_exp','$id_user','$order_id','$day_add')";
+                  $sql_insert = "INSERT INTO stock_product(product_name,product_count,product_price,price_center,count_cord,shipping_cost,expenses,id_adder,id_order,lot_number,create_at)
+                  VALUES ('$is_id_product','$pcount','$pprice','$p_price_center','$p_count_cord','$p_shipping_cost','$p_exp','$id_user','$order_id','$lot_number','$day_add')";
                   $query_inserts = mysqli_query($conn,$sql_insert) or die(mysqli_error($conn));
                   if($query_inserts){
                     $count_insert++;

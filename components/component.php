@@ -692,9 +692,9 @@ function listCustomer($number,$custom_name,$count_order,$pricessell,$pricespay,$
       <td class=\"font-weight-bold\">$custom_name</td>
       <td class=\"font-weight-bold\">$count_order รายการ</td>
       <td class=\"font-weight-bold\">$pricessell บาท</td>
-      <td class=\"font-weight-bold\">$pricespay บาท</td>
+      <td class=\"font-weight-bold text-success\">$pricespay บาท</td>
       
-      <td class=\"font-weight-bold\">$price_balnce_stuck บาท</td>
+      <td class=\"font-weight-bold text-danger\">$price_balnce_stuck บาท</td>
       <td class=\"font-weight-bold\">$count_paydebt ครั้ง</td>
       <td class='text-center'>
             <div class=\"table-data-feature\" >

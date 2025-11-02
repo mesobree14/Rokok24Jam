@@ -132,7 +132,7 @@
             }
             if($type_page == "IN"){
                echo "<script type=\"text/javascript\">
-                        MySetSweetAlertSuccess('success', 'เรียบร้อย', 'เพิ่มข้อมูลการจ่ายหนี้ของ $customer_name เรียบร้อย <a href=\"../details/PDF/PDF_historydebt.php?id_paydebt=$id_debtpay\" target=\"_blank\" class=\"text-uppercase\"> print pdf</a>', '../details/customer.php?custom_name=".urlencode($customer_name)."')
+                        MySetSweetAlertSuccess('success', 'เรียบร้อย', 'เพิ่มข้อมูลการจ่ายหนี้ของ $customer_name เรียบร้อย <a href=\"../details/PDF/PDF_historydebt.php?id_paydebt=$id_debtpay\" target=\"_blank\" class=\"text-uppercase\"> print pdf</a>', '../details/detail_customer.php?custom_name=".urlencode($customer_name)."')
                     </script>";
             }else{
               echo "<script type=\"text/javascript\">

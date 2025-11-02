@@ -42,7 +42,7 @@ if ($conn->connect_error) {
 $hist_debt_id = $_GET['id_paydebt'];
 $sql = $conn->query("SELECT * FROM custom_debtpaid WHERE id_debtpaid=$hist_debt_id");
 $his_debt = $sql->fetch_assoc();
-$custom = $conn->query("SELECT custome_name,tell_custome,location_send FROM orders_sell WHERE custome_name='{$his_debt["name_customer"]}' ORDER BY create_at DESC LIMIT 1");
+$custom = $conn->query("SELECT custome_name FROM orders_sell WHERE custome_name='{$his_debt["name_customer"]}' ORDER BY create_at DESC LIMIT 1");
 $res_custom = $custom->fetch_assoc();
 $type_debt = $conn->query("SELECT * FROM type_paydebt WHERE debtpay_id=$hist_debt_id");
 
@@ -119,13 +119,9 @@ $html = '
           <div style="float:left; width:50%;">
             <b>ชื่อผู้ชำระ : </b>'.$his_debt['name_customer'].'
           </div>
-          <div style="float:right;width:47%">
-            <b>เบอร์โทร : </b>'.$res_custom['tell_custome'].'
-          </div>
+          
         </div>
-        <div style="width:100%;display:flex;">
-          <b>ที่อยู่ : </b> [  '.$res_custom['location_send'].'  ]
-        </div>
+        
         <div style="width:100%;display:flex;font-size:20px;"> 
           <p style="font-size:20px;font-weight: bold;float: left;width:57%;padding:0%; margin:0%;"> ประเภทการจ่าย : [ ';
             while($rows = $type_debt->fetch_assoc()){
