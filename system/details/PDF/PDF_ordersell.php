@@ -51,7 +51,10 @@ $order = $query->fetch_assoc();
 $typepay = "SELECT ordersell_id,list_typepay FROM sell_typepay WHERE ordersell_id='$ordersell_id'";
 $querytypepay = $conn->query($typepay);
 
-$sql_items = "SELECT * FROM list_productsell WHERE ordersell_id='$ordersell_id'";
+$sql_items = "SELECT 
+  LP.list_sellid,LP.ordersell_id,LP.productname,LP.rate_customertype,LP.type_custom,LP.tatol_product,LP.price_to_pay,
+  NP.product_name,NP.id_name
+  FROM list_productsell LP LEFT JOIN name_product NP ON LP.productname = NP.id_name WHERE ordersell_id='$ordersell_id'";
 $query_item = $conn->query($sql_items);
 
 $sql_sun = "SELECT COUNT(*) AS total, SUM(tatol_product) AS totalproduct, SUM(price_to_pay) AS prices FROM list_productsell WHERE ordersell_id='$ordersell_id'";
@@ -230,7 +233,7 @@ while($rows = $query_item->fetch_assoc()){
   $type_customer[] = $rows['type_custom'];
   $html .= "
     <tr>
-        <td class=\"name\">{$rows['productname']}</td>
+        <td class=\"name\">{$rows['product_name']}</td>
         <td class=\"price\">{$rows['rate_customertype']}</td>
         <td class=\"qty\">{$rows['tatol_product']}</td>
         <td class=\"total\">{$rows['price_to_pay']}</td>

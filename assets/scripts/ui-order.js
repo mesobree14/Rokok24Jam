@@ -188,6 +188,7 @@ class modelCreateOrder extends HTMLElement {
     this.scripts();
     this.generateID();
     await this.loadBeUseCapital();
+    await this.loadLotCode();
   }
 
   async loadBeUseCapital() {
@@ -236,6 +237,22 @@ class modelCreateOrder extends HTMLElement {
       return response.data;
     } catch (e) {
       throw new Error(`Is Error : ${e}`);
+    }
+  }
+  async loadLotCode() {
+    try {
+      const api_lotcode = await fetch(
+        "http://localhost/Rokok24Jam/system/backend/api/lot_order.php",
+        {
+          method: "GET",
+          credentials: "include",
+        }
+      );
+      const responsedata = await api_lotcode.json();
+      console.log({ lot: responsedata });
+      document.getElementById("lot_code").value = responsedata.lot_code;
+    } catch (e) {
+      throw new Error(`Is Error Get data lot code ${e}`);
     }
   }
 
@@ -507,8 +524,9 @@ class modelCreateOrder extends HTMLElement {
                   <div class="col-md-8">
                       <div class="col-md-12">
                         <div class="form-group mb-2">
-                          <label class="mt-0 mb-0 font-weight-bold text-dark">รายการคำสั่งซื้อ</label>
-                          <input type="text" class="form-control" name="order_name" id="orderbuy_name" placeholder="รายการคำสั่งซื้อ" required>
+                          <label class="mt-0 mb-0 font-weight-bold text-dark">รายการล็อตที่</label>
+                          <input type="hidden" class="form-control" name="order_name" id="orderbuy_name" placeholder="รายการคำสั่งซื้อ" required>
+                          <input type="text" class="form-control" name="lot_number" id="lot_code" placeholder="รายการล็อตที่" required>
                         </div> 
                       </div>
 
@@ -713,6 +731,7 @@ class modelUpdateOrder extends HTMLElement {
       this.scripts();
     });
     this.loadProductAll();
+    //this.loadLotCode();
 
     this.renderUpdateOrder();
     this.countterForm();
@@ -765,9 +784,26 @@ class modelUpdateOrder extends HTMLElement {
       this.stockproductAll.push(...responsedata.data);
       return responsedata.data;
     } catch (e) {
-      throw new Error(`Is Error Get data ${e}`);
+      throw new Error(`Is Error Get data stock ${e}`);
     }
   }
+
+  // async loadLotCode() {
+  //   try {
+  //     const api_lotcode = await fetch(
+  //       "http://localhost/Rokok24Jam/system/backend/api/lot_order.php",
+  //       {
+  //         method: "GET",
+  //         credentials: "include",
+  //       }
+  //     );
+  //     const responsedata = await api_lotcode.json();
+  //     console.log({ lot: responsedata });
+  //     document.getElementById("lot_code").value = responsedata.lot_code;
+  //   } catch (e) {
+  //     throw new Error(`Is Error Get data lot code ${e}`);
+  //   }
+  // }
 
   updateData(data_product, id_products, index, group) {
     let selectedData = group.querySelector(`.IsselectedData-${index}`);
@@ -1200,7 +1236,8 @@ class modelUpdateOrder extends HTMLElement {
                       <div class="col-md-12">
                         <div class="form-group mb-2">
                           <label class="mt-0 mb-0 font-weight-bold text-dark">รายการคำสั่งซื้อ</label>
-                          <input type="text" class="form-control" name="order_name" id="order_name" placeholder="รายการคำสั่งซื้อ" required>
+                          <input type="hidden" class="form-control" name="order_name" id="order_name" placeholder="รายการคำสั่งซื้อ" required>
+                          <input type="text" class="form-control" name="lot_number" id="lot_codes" placeholder="รายการล็อตที่" required>
                         </div> 
                       </div>
 
@@ -1267,6 +1304,7 @@ $(document).on("click", "#update_order", function (e) {
   if (container) container.innerHTML = "";
 
   let order_name = $(this).data("ordername");
+  let lot_codes = $(this).data("lot");
   let total_cost = $(this).data("totalcost");
 
   let priceorder = $(this).data("priceorder");
@@ -1274,6 +1312,7 @@ $(document).on("click", "#update_order", function (e) {
   let dateorder = $(this).data("dateorder");
   $("#order_id").val(product_id);
   $("#order_name").val(order_name);
+  $("#lot_codes").val(lot_codes);
   $("#totalcost_orders").val(total_cost);
   $("#defult-price").html(`เดิม ${total_cost} บาท`);
   $("#priceorder").html(priceorder);

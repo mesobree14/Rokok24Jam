@@ -104,7 +104,7 @@ if(!isset($_SESSION['users_data'])){
                           <tr>
                               <th>ลำดับ</th> 
                               <th>ชื่อ</th>
-                              <th>จากคำสั่งซื้อ</th>
+                              <th>ล็อตสินค้าที่</th>
                               <th>ราคาต้นทุนต่อลัง</th>
                               <th>ราคากลางต่อลัง</th>
                               <th>จำนวน</th>
@@ -117,7 +117,7 @@ if(!isset($_SESSION['users_data'])){
                       <tbody>
                           <?php
                               $get_sql = "SELECT stock_product.product_id,stock_product.product_count,stock_product.product_price,stock_product.count_cord,stock_product.price_center,
-                              stock_product.shipping_cost,stock_product.expenses,order_box.order_name,order_box.date_time_order,name_product.id_name,name_product.product_name AS is_product_name FROM stock_product 
+                              stock_product.shipping_cost,stock_product.expenses,order_box.lot_numbers,order_box.order_name,order_box.date_time_order,name_product.id_name,name_product.product_name AS is_product_name FROM stock_product 
                               LEFT JOIN name_product ON stock_product.product_name = name_product.id_name 
                               LEFT JOIN order_box ON order_box.order_id = stock_product.id_order 
                               WHERE stock_product.product_name='$id_productname' ORDER BY stock_product.create_at DESC";
@@ -125,7 +125,7 @@ if(!isset($_SESSION['users_data'])){
                                 foreach($get_datastock as $key => $res){
                                     tableDetailStock(
                                         ($key+1), $res['product_id'], $res['id_name'],$res['is_product_name'],$res['product_count'],$res['product_price'],$res['count_cord'],$res['price_center'],
-                                        $res['order_name'],$res['date_time_order'],$res['shipping_cost'],$res['expenses']
+                                        $res['order_name'],$res['lot_numbers'],$res['date_time_order'],$res['shipping_cost'],$res['expenses']
                                       );
                                 }
                           ?>

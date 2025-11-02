@@ -43,7 +43,11 @@ if ($conn->connect_error) {
 $order_id = $_GET['order_id'];
 $sql_query = $conn->query("SELECT * FROM order_box WHERE order_id=$order_id");
 $order = $sql_query->fetch_assoc();
-$sql_product = $conn->query("SELECT product_name,product_count,product_price,expenses,id_order FROM stock_product WHERE id_order=$order_id");
+$sql_product = $conn->query("SELECT 
+  stock_product.product_name,stock_product.product_count,stock_product.product_price,stock_product.expenses,stock_product.id_order,name_product.product_name AS new_productname
+  FROM stock_product LEFT JOIN name_product 
+  ON name_product.id_name = stock_product.product_name 
+  WHERE id_order=$order_id");
 $sql_count = $conn->query("SELECT COUNT(*) AS total, SUM(product_count) AS product_count, SUM(expenses) AS count_expenses FROM stock_product WHERE id_order=$order_id");
 $count_rows = $sql_count->fetch_assoc();
 
@@ -190,7 +194,7 @@ $html .='
   while($rows = $sql_product->fetch_assoc()){
     $html .= "
     <tr>
-        <td class=\"name\">{$rows['product_name']}</td>
+        <td class=\"name\">{$rows['new_productname']}</td>
         <td class=\"price\">".number_format($rows['product_price'] ?? 0,2,'.',',')."</td>
         <td class=\"qty\">{$rows['product_count']}</td>
         <td class=\"total\">".number_format($rows['expenses'] ?? 0,2,'.',',')."</td>

@@ -28,7 +28,7 @@ $mpdf = new \Mpdf\Mpdf([
     'default_font' => 'thsarabunnew',
     'tempDir' => __DIR__ . '/../../../tmp',
     'mode' => 'utf-8',
-    'format' => [140, 210],
+    'format' => [160, 210],
     'margin_left' => 5,
     'margin_right' => 5,
     'margin_top' => 5,
@@ -54,7 +54,10 @@ if ($conn->connect_error) {
     $acc_useprofit = mysqli_fetch_assoc($sql_useprofit);
     
     $sql_capital = mysqli_query($conn,"SELECT COUNT(*) AS total_capital,product_name, SUM(expenses) / SUM(product_count) AS avg_rate_price FROM stock_product GROUP BY product_name");
-    $sql_profit = mysqli_query($conn,"SELECT COUNT(*) AS total_profit,productname, SUM(tatol_product) AS total_product, SUM(price_to_pay) AS price_sell FROM list_productsell GROUP BY productname");
+    $sql_profit = mysqli_query($conn,
+      "SELECT COUNT(*) AS total_profit,list_productsell.productname,name_product.product_name,
+        SUM(list_productsell.tatol_product) AS total_product, SUM(list_productsell.price_to_pay) AS price_sell 
+        FROM list_productsell LEFT JOIN name_product ON name_product.id_name = list_productsell.productname GROUP BY productname");
     $capitalData = [];
     $sum_totalsell = 0;
     $sum_pricesell = 0;
@@ -151,6 +154,7 @@ if ($conn->connect_error) {
           $in = 1;
           while($row = mysqli_fetch_assoc($sql_profit)){
             $product = $row['productname'];
+            $product_names = $row['product_name'];
             $totalProduct = $row['total_product'];
             $totalSell = $row['total_profit'];
             $priceSell = $row['price_sell'];
@@ -166,7 +170,7 @@ if ($conn->connect_error) {
             $html .= '
               <tr>
                   <td class="num">'.$in.'</td>
-                  <td class="name">'.$product.'</td>
+                  <td class="name">'.$product_names.'</td>
                   <td class="price">'.number_format($avgRate ?? 0,2,'.',',').'</td>
                   <td class="qty">'.$totalProduct.'</td>
                   <td class="total">'.number_format($priceSell ?? 0,2,'.',',').'</td>

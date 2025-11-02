@@ -49,6 +49,12 @@ function navigationOfiicer($path = ""){
                           </a>
                         </li>
                         <li>
+                          <a href=\"{$path}lot.php\">
+                              <i class=\"fa-solid fa-cubes\"></i>
+                              <span>ล็อตสินค้า</span>
+                          </a>
+                        </li>
+                        <li>
                           <a href=\"{$path}ordersell.php\">
                             <i class=\"fa-solid fa-truck-fast\"></i>
                               <span>สินค้าที่ขาย</span>
@@ -219,12 +225,13 @@ function tableNameProduct($number,$id_product,$product_name,$price_default,$pric
   echo $list;
 }
 
-function tablelistsetOrder ($number, $orderid, $ordername, $totalcost_order, $price_order, $sliptImg, $date_time_order){
+function tablelistsetOrder ($number, $orderid, $ordername,$lot_numbers, $totalcost_order, $price_order, $sliptImg, $date_time_order){
   $listOrder = "
   <form>
     <tr>
       <td>$number</td>
       <td class=\"font-weight-bold\">$ordername</td>
+      <td class=\"font-weight-bold\">$lot_numbers</td>
       <td class=\"font-weight-bold\">$totalcost_order บาท</td>
       <td class=\"font-weight-bold\">$price_order รายการ</td> 
       <td class=\"font-weight-bold\">$date_time_order</td> 
@@ -242,7 +249,7 @@ function tablelistsetOrder ($number, $orderid, $ordername, $totalcost_order, $pr
             </a>
             <button type=\"button\" id=\"update_order\" data-target=\"#modalFormUpdateOrder\" data-toggle=\"modal\"  
                    class=\"item\" data-id=\"$orderid\" data-ordername=\"$ordername\" data-totalcost=\"$totalcost_order\" 
-                   data-priceorder=\"$price_order\" data-slipimage=\"$sliptImg\" data-dateorder=\"$date_time_order\"
+                   data-priceorder=\"$price_order\" data-slipimage=\"$sliptImg\" data-dateorder=\"$date_time_order\" data-lot=\"$lot_numbers\"
             >
                 <i class=\"fas fa-pencil-alt text-warning\"></i>
             </button>
@@ -280,14 +287,14 @@ function tablelistStock ($number, $id_product,$is_productname, $total_order, $to
   echo $listStock;
 }
 
-function tableDetailStock($number, $product_id,$id_nameproduct,$is_product_name,$productcount,$productprice, $count_cord,$price_center,$ordername, $datetime_order,$shipping_cost,$expenses){
+function tableDetailStock($number, $product_id,$id_nameproduct,$is_product_name,$productcount,$productprice, $count_cord,$price_center,$ordername,$lot_numbers, $datetime_order,$shipping_cost,$expenses){
     $toal_all = $productprice * $productcount;
     $list_stock = "
         <form>
             <tr>
               <td class=\"font-weight-bold\">$number</td>
               <td class=\"font-weight-bold\">$is_product_name</td>
-              <td class=\"font-weight-bold\">$ordername</td>
+              <td class=\"font-weight-bold\">$lot_numbers</td>
               <td class=\"font-weight-bold\">$productprice บาท</td>
               <td class=\"font-weight-bold\">$price_center บาท</td>
               <td class=\"font-weight-bold\">$productcount ลัง ($count_cord คอต)</td>

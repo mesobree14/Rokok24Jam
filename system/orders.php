@@ -52,7 +52,8 @@ if(!isset($_SESSION['users_data'])){
                     <thead>
                         <tr>
                             <th>ลำดับ</th>
-                            <th style="width:22%">คำสั่งซื้อ</th>
+                            <th style="">คำสั่งซื้อ</th>
+                            <th style="">ล็อตสินค้าที่</th>
                             <th>ค่าใช้จ่าย</th>
                             <th>รายการสินค้า</th>
                             <th>วันที่สั่งซื้อ <i class="fa-solid fa-arrow-up"></i></th>
@@ -63,15 +64,20 @@ if(!isset($_SESSION['users_data'])){
                     <tbody>
                         <?php
                             $get_order = mysqli_query($conn, "SELECT * FROM order_box ORDER BY create_at DESC")or die(mysqli_error());
-                              foreach($get_order as $key => $res){
+                              $result_order = [];
+                              while($row = mysqli_fetch_assoc($get_order)){
+                                $result_order[] = $row;
+                              }
+                              foreach($result_order as $key => $res){
                                   tablelistsetOrder(
-                                      ($key+1), $res['order_id'], $res['order_name'],$res['totalcost_order'],$res['count_order'],
+                                      ($key+1), $res['order_id'], $res['order_name'],$res['lot_numbers'],$res['totalcost_order'],$res['count_order'],
                                       $res['slip_order'],$res['date_time_order']
                                     );
                               }
                         ?>
                     </tbody>
                 </table> 
+                || <?php echo count($result_order); ?>
             </div>
           </div>
       </div>

@@ -53,36 +53,66 @@ if(!isset($_SESSION['users_data'])){
                         <tr>
                             <th style="width:30%">ชื่อสมาชิก</th>
                             <th style="width:12%">จำนวนครั้งที่ขาย</th>
+                            <th style="width:15%">จำนวนลัง</th>
                             <th style="width:15%">รายได้ทั้งหมดที่ขาย</th>
-                            <th style="width:15%">กำไรที่ขายได้</th>
                             <th style="width:13%">จัดการ</th>
                         </tr>
                     </thead>
                     <tbody>
                       <?php
+                        $get_peplegroup = "
+                        SELECT 
+                            pg.id_peplegroup,
+                            pg.name_peplegroup,
+                            pg.phone_group,
+                            pg.status_group,
+                            COALESCE(o.itemcount, 0) AS item_count,
+                            COALESCE(p.product_total, 0) AS total_product,
+                            COALESCE(p.all_pricesells, 0) AS total_prices
+                        FROM peple_groups AS pg
+                        LEFT JOIN (
+                            SELECT sell_idpeplegroup, COUNT(*) AS itemcount
+                            FROM orders_sell
+                            GROUP BY sell_idpeplegroup
+                        ) AS o ON pg.id_peplegroup = o.sell_idpeplegroup
+                        LEFT JOIN (
+                            SELECT os.sell_idpeplegroup, SUM(op.productscount) AS product_total,SUM(op.allone_pricesell) AS all_pricesells
+                            FROM (
+                                SELECT ls.ordersell_id, SUM(tatol_product) AS productscount,SUM(price_to_pay) AS allone_pricesell
+                                FROM list_productsell AS ls
+                                GROUP BY ls.ordersell_id
+                            ) AS op
+                            JOIN orders_sell AS os ON os.id_ordersell = op.ordersell_id
+                            GROUP BY os.sell_idpeplegroup
+                        ) AS p ON pg.id_peplegroup = p.sell_idpeplegroup
+                        ";
+
                         // $get_peplegroup = "SELECT 
-                        //   PG.id_peplegroup,PG.name_peplegroup,PG.phone_group,PG.status_group,
-                        //   COALESCE(OS_SUM.itemcount, 0)AS item_count,
-                        //   COALESCE(OS_SUM.totalprice, 0)AS total_prices
-                        //   FROM peple_groups PG 
+                        //   peple_groups.id_peplegroup,peple_groups.name_peplegroup,
+                        //   COALESCE(t2_orders_sell.itemcount,0) AS item_count,
+                        //   COALESCE(t3_list_productsell.product_total,0)AS total_prices
+                        //   FROM peple_groups 
                         //   LEFT JOIN (
-                        //     SELECT sell_idpeplegroup,COUNT(DISTINCT id_ordersell) AS itemcount,SUM(is_totalprice) AS totalprice FROM orders_sell GROUP BY sell_idpeplegroup
-                        //   ) OS_SUM ON OS_SUM.sell_idpeplegroup = PG.id_peplegroup
+                        //     SELECT sell_idpeplegroup,COUNT(*) AS itemcount FROM orders_sell GROUP BY sell_idpeplegroup
+                        //   ) AS t2_orders_sell ON peple_groups.id_peplegroup = t2_orders_sell.sell_idpeplegroup
                         //   LEFT JOIN (
-                        //     SELECT OS_SUM.sell_idpeplegroup, SUM(tatol_product) AS total_product
-                        //     FROM (
-                        //     SELECT ordersell_id, COUNT(*) AS productcount,sell_idpeplegroup FROM list_productsell
-                        //     )
-                        //   )";
-                        // $query_peplegroup = mysqli_query($conn,$get_peplegroup);
-                        // foreach($query_peplegroup as $key => $res){
-                        //   listPepleGroup($key+1,$res['id_peplegroup'],$res['name_peplegroup'],$res['phone_group'],$res['status_group'],$res['item_count'],$res['total_prices'],0);
-                        // }
-                        $get_peplegroup = "SELECT id_peplegroup,name_peplegroup,phone_group,status_group FROM peple_groups";
+                        //     SELECT orders_sell.sell_idpeplegroup, SUM(tatol_product) AS product_total
+                        //     FROM(
+                        //       SELECT ordersell_id, COUNT(*) AS productscount, sell_idpeplegroup
+                        //       FROM list_productsell JOIN orders_sell ON orders_sell.id_ordersell = list_productsell.ordersell_id
+                        //       GROUP BY ordersell_id, sell_idpeplegroup
+                        //     ) AS ordersellsproduct GROUP BY sell_idpeplegroup
+                        //   ) AS t3_list_productsell ON peple_groups.id_peplegroup = t3_list_productsell.sell_idpeplegroup
+                        // ";
                         $query_peplegroup = mysqli_query($conn,$get_peplegroup);
                         foreach($query_peplegroup as $key => $res){
-                          listPepleGroup($key+1,$res['id_peplegroup'],$res['name_peplegroup'],$res['phone_group'],$res['status_group'],0,0,0);
+                          listPepleGroup($key+1,$res['id_peplegroup'],$res['name_peplegroup'],$res['phone_group'],$res['status_group'],$res['item_count'],$res['total_product'],$res['total_prices']);
                         }
+                        //$get_peplegroup = "SELECT id_peplegroup,name_peplegroup,phone_group,status_group FROM peple_groups";
+                        // $query_peplegroup = mysqli_query($conn,$get_peplegroup);
+                        // foreach($query_peplegroup as $key => $res){
+                        //   listPepleGroup($key+1,$res['id_peplegroup'],$res['name_peplegroup'],$res['phone_group'],$res['status_group'],0,0,0);
+                        // }
 
                       ?>
                     </tbody>

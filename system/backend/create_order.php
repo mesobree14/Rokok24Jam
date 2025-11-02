@@ -56,6 +56,8 @@
           $countInsert = 0; 
 
           $order_name = $_POST['order_name'];
+          $lot_number = $_POST['lot_number'];
+          echo $lot_number;
           $totalcost_order = $_POST['totalcost_order'];
           $date_time_order = $_POST['date_time_order'];
           $count_order = count($_POST['product_name']);
@@ -71,8 +73,8 @@
           if($_POST['status_form'] == "create"){
 
 
-              $insertOrder = "INSERT INTO order_box (order_name,slip_order,totalcost_order,count_order,id_adder,date_time_order,create_at) 
-              VALUES ('$order_name','".setImgpath("slipt_order")."','$totalcost_order','$count_order','$id_user','$date_time_order','$day_add')";
+              $insertOrder = "INSERT INTO order_box (order_name,lot_numbers,slip_order,totalcost_order,count_order,id_adder,date_time_order,create_at) 
+              VALUES ('$order_name','$lot_number','".setImgpath("slipt_order")."','$totalcost_order','$count_order','$id_user','$date_time_order','$day_add')";
               $queryOrder = mysqli_query($conn,$insertOrder) or die(mysqli_error($conn));
               if($queryOrder){
                 $id_order = mysqli_insert_id($conn);
@@ -118,10 +120,10 @@
 
             $all_success = true;
             if(isset($_FILES['order_Slip']) && $_FILES['order_Slip']['error'] == 0){
-            $update_order = "UPDATE order_box SET order_name='$order_name', slip_order='".setImgpath("order_Slip")."',
+            $update_order = "UPDATE order_box SET order_name='$order_name',lot_numbers='$lot_number', slip_order='".setImgpath("order_Slip")."',
               totalcost_order='$totalcost_order', count_order='$count_order', id_adder='$id_user', date_time_order='$date_time_order' WHERE order_id='$order_id'";
             }else{
-              $update_order = "UPDATE order_box SET order_name='$order_name', slip_order='$default_img',
+              $update_order = "UPDATE order_box SET order_name='$order_name',lot_numbers='$lot_number', slip_order='$default_img',
               totalcost_order='$totalcost_order', count_order='$count_order', id_adder='$id_user', date_time_order='$date_time_order' WHERE order_id='$order_id'";
             }
               $query_update = mysqli_query($conn,$update_order) or die(mysqli_error($conn));
